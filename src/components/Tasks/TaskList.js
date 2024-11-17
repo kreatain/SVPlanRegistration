@@ -65,6 +65,15 @@ const TaskList = () => {
                 {courses.find((c) => c.id === task.course_id)?.course_name ||
                   "N/A"}
               </p>
+              {/* Added File Display */}
+              {task.file_name && (
+                <p>
+                  <strong>File:</strong>{" "}
+                  <a href="#" onClick={(e) => e.preventDefault()}>
+                    {task.file_name}
+                  </a>
+                </p>
+              )}
             </div>
           ))
         ) : (
@@ -98,6 +107,15 @@ const TaskList = () => {
                 {courses.find((c) => c.id === task.course_id)?.course_name ||
                   "N/A"}
               </p>
+              {/* Added File Display */}
+              {task.file_name && (
+                <p>
+                  <strong>File:</strong>{" "}
+                  <a href="#" onClick={(e) => e.preventDefault()}>
+                    {task.file_name}
+                  </a>
+                </p>
+              )}
             </div>
           ))
         ) : (

@@ -9,13 +9,13 @@ const Login = () => {
   const { users } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "", // For simulation purposes only
   });
 
   const [selectedUser, setSelectedUser] = useState("");
 
-  const { username, password } = formData;
+  const { email, password } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,7 +28,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     // Simulate login by finding the user from mock data
-    const user = users.find((user) => user.username === username);
+    const user = users.find((user) => user.email === email);
 
     if (user && password === "password") {
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
@@ -43,14 +43,14 @@ const Login = () => {
       <h2>Login</h2>
       <form onSubmit={handleLogin} className="auth-form">
         <div className="form-group">
-          <label>Username:</label>
+          <label>Email:</label>
           <input
-            type="text"
-            name="username"
-            value={username}
+            type="email"
+            name="email"
+            value={email}
             onChange={handleChange}
             required
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
         </div>
         <div className="form-group">

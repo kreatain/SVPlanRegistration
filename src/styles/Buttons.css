@@ -14,7 +14,7 @@
   font-size: 16px;
   font-weight: 300;
   transition: background-color var(--transition-speed) ease, transform 0.2s ease;
-  width: 200px; /* Adjust width as needed */
+  width: 240px; /* Adjust width as needed */
   margin: var(--spacing-small) auto; /* Center the button */
   display: block;
 }

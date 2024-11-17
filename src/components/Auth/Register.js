@@ -8,7 +8,6 @@ const Register = () => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
     first_name: "",
@@ -16,7 +15,7 @@ const Register = () => {
     role: "student", // Default role
   });
 
-  const { username, email, password, first_name, last_name, role } = formData;
+  const { email, password, first_name, last_name, role } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,7 +26,6 @@ const Register = () => {
     // Simulate registration by dispatching a user creation action
     const newUser = {
       id: Date.now(),
-      username,
       email,
       first_name,
       last_name,
@@ -42,17 +40,6 @@ const Register = () => {
     <div className="auth-container">
       <h2>Register</h2>
       <form onSubmit={handleRegister} className="auth-form">
-        <div className="form-group">
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={username}
-            onChange={handleChange}
-            required
-            placeholder="Choose a username"
-          />
-        </div>
         <div className="form-group">
           <label>Email:</label>
           <input

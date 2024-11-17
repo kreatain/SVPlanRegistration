@@ -108,3 +108,16 @@
   background-color: var(--primary-color);
   border-radius: var(--border-radius-small);
 }
+
+/* Added Styles for File Link */
+.task-card a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 300;
+  transition: color var(--transition-speed) ease;
+}
+
+.task-card a:hover {
+  color: #0056b3; /* Darker shade on hover */
+  text-decoration: underline;
+}

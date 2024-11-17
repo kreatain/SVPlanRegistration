@@ -15,10 +15,11 @@ import CreateEvent from "./components/Events/CreateEvent";
 import EventDetail from "./components/Events/EventDetail";
 import TaskList from "./components/Tasks/TaskList";
 import AssignTask from "./components/Tasks/AssignTask";
-import AddTask from "./components/Tasks/AddTask"; // New Component
+import AddTask from "./components/Tasks/AddTask";
 import Notification from "./components/Notification/Notification";
 import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
+import ChatBot from "./components/ChatBot";
 
 import "./styles/App.css";
 import "./styles/Navbar.css";
@@ -29,6 +30,7 @@ import "./styles/CreateEvent.css";
 import "./styles/EventDetail.css";
 import "./styles/AssignTask.css";
 import "./styles/Notification.css";
+import "./styles/ChatBot.css";
 
 function AppRoutes() {
   // Access authentication state from Redux
@@ -38,6 +40,9 @@ function AppRoutes() {
     <div className="App">
       {/* Conditionally render Navbar if authenticated */}
       {isAuthenticated && <Navbar />}
+
+      {/* Conditionally render ChatBot if authenticated */}
+      {isAuthenticated && <ChatBot />}
 
       <Routes>
         {/* Authentication Routes */}

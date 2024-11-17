@@ -1,3 +1,5 @@
+// frontend/src/components/Tasks/AddTask.js
+
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,12 +15,18 @@ const AddTask = () => {
     description: "",
     due_date: "",
     course_id: "",
+    file: null, // Added file field
   });
 
-  const { description, due_date, course_id } = formData;
+  const { description, due_date, course_id, file } = formData;
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "file") {
+      setFormData({ ...formData, file: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleAddTask = (e) => {
@@ -33,6 +41,7 @@ const AddTask = () => {
         student_id: user.id,
         course_id: parseInt(course_id),
         progress_status: "Pending",
+        file_name: file ? file.name : null, // Store file name for visualization
       },
     });
     navigate("/tasks");
@@ -78,6 +87,16 @@ const AddTask = () => {
               </option>
             ))}
           </select>
+        </div>
+        {/* New File Upload Field */}
+        <div className="form-group">
+          <label>Upload File:</label>
+          <input
+            type="file"
+            name="file"
+            accept=".pdf,.doc,.docx,.jpg,.png" // Specify accepted file types
+            onChange={handleChange}
+          />
         </div>
         <button type="submit" className="btn-primary">
           Add Task
