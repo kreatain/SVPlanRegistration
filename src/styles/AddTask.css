@@ -1,0 +1,71 @@
+/* src/styles/AddTask.css */
+
+/* Import Variables */
+@import "./Variables.css";
+@import "./Buttons.css";
+
+/* Add Task Container */
+.add-task-container {
+  background-color: var(--background-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  max-width: 600px; /* Adjusted width */
+  width: 90%;
+  margin: var(--spacing-large) auto;
+  text-align: center;
+}
+
+.add-task-container h2 {
+  font-size: 24px;
+  color: #000000; /* Black */
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+}
+
+/* Add Task Form */
+.add-task-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-medium);
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-small);
+  color: #000000; /* Black */
+  font-weight: 300;
+}
+
+.add-task-form input,
+.add-task-form textarea,
+.add-task-form select {
+  width: 100%;
+  max-width: 400px; /* Adjust as needed */
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  font-size: 16px;
+  font-weight: 300;
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+  margin: 0 auto; /* Center the input fields */
+}
+
+.add-task-form input:focus,
+.add-task-form textarea:focus,
+.add-task-form select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--primary-color);
+  outline: none;
+}
+
+/* Buttons */
+.btn-secondary {
+  /* Styles inherited from Buttons.css */
+}

@@ -1,0 +1,75 @@
+/* src/styles/Buttons.css */
+
+/* Import Variables */
+@import "./Variables.css";
+
+/* Primary Button */
+.btn-primary {
+  background-color: var(--primary-color); /* Light Blue */
+  color: #ffffff; /* White text */
+  border: none;
+  padding: 12px 0;
+  border-radius: var(--border-radius-medium);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+  width: 200px; /* Adjust width as needed */
+  margin: var(--spacing-small) auto; /* Center the button */
+  display: block;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--primary-color); /* Light Blue */
+  color: #ffffff; /* White text */
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius-medium);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  width: 200px;
+  transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: var(--spacing-medium);
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Logout Button */
+.btn-logout {
+  background-color: var(--primary-color); /* Light Blue */
+  color: #ffffff; /* White text */
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+}
+
+.btn-logout:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+}

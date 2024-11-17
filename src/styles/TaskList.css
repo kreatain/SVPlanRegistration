@@ -1,0 +1,110 @@
+/* src/styles/TaskList.css */
+
+/* Import Variables and Buttons */
+@import "./Variables.css";
+@import "./Buttons.css";
+
+/* Task Container */
+.task-container {
+  background-color: var(--background-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  max-width: 1000px;
+  width: 90%;
+  margin: var(--spacing-large) auto;
+  text-align: center;
+}
+
+.task-container h2 {
+  font-size: 24px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+  font-family: var(--font-family);
+}
+
+/* Add/Assign Task Button */
+.task-container .btn-primary {
+  margin-bottom: var(--spacing-medium * 2); /* Add space below the button */
+}
+
+/* Task List */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+  justify-content: center;
+  margin-bottom: var(--spacing-large); /* Add space between task lists */
+}
+
+.task-list h3 {
+  font-size: 20px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+}
+
+/* Task Card */
+.task-card {
+  background-color: var(--background-color);
+  padding: var(--spacing-medium);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+  position: relative; /* For positioning the checkbox */
+  transition: background-color var(--transition-speed) ease;
+  margin: 0 auto;
+}
+
+.task-card:hover {
+  background-color: var(--primary-hover);
+}
+
+.task-card h3 {
+  font-size: 20px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-small);
+  font-weight: 300;
+}
+
+.task-card p {
+  font-size: 16px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-small);
+}
+
+/* Checkbox for Task Completion */
+.task-card .task-checkbox {
+  position: absolute;
+  top: var(--spacing-medium);
+  right: var(--spacing-medium);
+  transform: scale(1.5);
+  cursor: pointer;
+  accent-color: var(--primary-color); /* For modern browsers */
+}
+
+/* Completed Task Styles */
+.task-card.completed h3,
+.task-card.completed p {
+  text-decoration: line-through;
+  color: var(--secondary-text); /* Medium Gray */
+}
+
+/* Scrollbar Styling */
+/* For Webkit Browsers (Chrome, Safari) */
+.task-container::-webkit-scrollbar {
+  width: 8px; /* Match input box height */
+}
+
+.task-container::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+.task-container::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius-small);
+}

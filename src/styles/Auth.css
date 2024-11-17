@@ -1,0 +1,85 @@
+/* src/styles/Auth.css */
+
+/* Import Variables and Buttons */
+@import "./Variables.css";
+@import "./Buttons.css";
+
+/* Auth Container */
+.auth-container {
+  background-color: var(--background-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  max-width: 350px; /* Reduced max-width */
+  width: 90%;
+  margin: var(--spacing-large) auto;
+  text-align: center;
+}
+
+.auth-container h2 {
+  font-size: 24px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+  font-family: var(--font-family);
+}
+
+/* Auth Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the form */
+}
+
+.form-group {
+  margin-bottom: var(--spacing-medium);
+  width: 100%; /* Full width */
+  max-width: 300px; /* Shortened input fields */
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-small);
+  color: var(--text-color); /* Black */
+  font-weight: 300;
+}
+
+.auth-form input,
+.auth-form textarea,
+.auth-form select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  font-size: 16px;
+  font-weight: 300;
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+}
+
+.auth-form input:focus,
+.auth-form textarea:focus,
+.auth-form select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--primary-color);
+  outline: none;
+}
+
+/* Buttons */
+.btn-primary {
+  /* Styles inherited from Buttons.css */
+}
+
+/* Toggle Links */
+.toggle-link {
+  display: block;
+  margin-top: var(--spacing-medium);
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+.toggle-link:hover {
+  color: var(--primary-hover);
+}

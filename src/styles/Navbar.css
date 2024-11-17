@@ -1,0 +1,44 @@
+/* src/styles/Navbar.css */
+
+/* Import Variables and Buttons */
+@import "./Variables.css";
+@import "./Buttons.css";
+
+/* Navbar Styles */
+.navbar {
+  background-color: var(--background-color);
+  padding: var(--spacing-medium) var(--spacing-large);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left h1 {
+  font-size: 24px;
+  color: var(--text-color); /* Black */
+  margin: 0;
+  font-family: var(--font-family);
+}
+
+.navbar-right {
+  display: flex;
+  gap: var(--spacing-medium);
+  align-items: center;
+}
+
+.navbar-right a {
+  font-size: 16px;
+  color: var(--text-color); /* Black */
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+.navbar-right a:hover {
+  color: var(--primary-hover);
+}
+
+/* Logout Button Styles */
+.btn-logout {
+  /* Inherit styles from Buttons.css */
+}

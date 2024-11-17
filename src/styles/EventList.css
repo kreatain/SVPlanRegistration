@@ -1,0 +1,87 @@
+/* src/styles/EventList.css */
+
+/* Import Variables and Buttons */
+@import "./Variables.css";
+@import "./Buttons.css";
+
+/* Event Container */
+.event-container {
+  background-color: var(--background-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  max-width: 1000px;
+  width: 90%;
+  margin: var(--spacing-large) auto;
+  text-align: center;
+}
+
+.event-container h2 {
+  font-size: 24px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+  font-family: var(--font-family);
+}
+
+/* Create Event Button */
+.event-container .btn-primary {
+  margin-bottom: var(--spacing-medium); /* Add space below the button */
+}
+
+/* Event List */
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-medium);
+  justify-content: center;
+}
+
+/* Event Card */
+.event-card {
+  background-color: var(--background-color);
+  padding: var(--spacing-medium);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  width: 300px;
+  text-align: left;
+}
+
+.event-card h3 {
+  font-size: 20px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-small);
+  font-weight: 300;
+}
+
+.event-card p {
+  font-size: 16px;
+  color: var(--text-color); /* Black */
+  margin-bottom: var(--spacing-small);
+}
+
+.event-card .btn-secondary {
+  /* Inherit styles from Buttons.css */
+}
+
+/* Scrollbar Styling */
+/* For Webkit Browsers (Chrome, Safari) */
+.event-container::-webkit-scrollbar {
+  width: 8px; /* Match input box height */
+}
+
+.event-container::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+.event-container::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius-small);
+}
+
+/* For Firefox */
+.event-container {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: var(--primary-color) var(--background-color);
+}

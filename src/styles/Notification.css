@@ -1,0 +1,50 @@
+/* src/styles/Notification.css */
+
+/* Import Variables */
+@import "./Variables.css";
+
+/* Notification Container */
+.notification-container {
+  background-color: var(--background-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  max-width: 800px;
+  margin: var(--spacing-large) auto;
+  text-align: center;
+}
+
+.notification-container h2 {
+  font-size: 24px;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-medium);
+  font-weight: 300;
+}
+
+/* Notification List */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+}
+
+/* Notification Card */
+.notification-card {
+  background-color: var(--background-color);
+  padding: var(--spacing-medium);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  text-align: left;
+}
+
+.notification-card p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.notification-date {
+  font-size: 14px;
+  color: var(--secondary-text);
+  margin-top: var(--spacing-small);
+}
