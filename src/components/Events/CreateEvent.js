@@ -22,7 +22,7 @@ const CreateEvent = () => {
 
   const handleCreate = (e) => {
     e.preventDefault();
-    // Simulate event creation
+    // For simulation purposes only
     navigate("/events");
     alert("Event Created Successfully! (Mock)");
   };

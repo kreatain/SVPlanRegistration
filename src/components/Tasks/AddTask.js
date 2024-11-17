@@ -1,5 +1,3 @@
-// frontend/src/components/Tasks/AddTask.js
-
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -15,7 +13,7 @@ const AddTask = () => {
     description: "",
     due_date: "",
     course_id: "",
-    file: null, // Added file field
+    file: null,
   });
 
   const { description, due_date, course_id, file } = formData;
@@ -31,7 +29,7 @@ const AddTask = () => {
 
   const handleAddTask = (e) => {
     e.preventDefault();
-    // Simulate adding a new task
+    // For simulation purposes only
     dispatch({
       type: "ADD_TASK",
       payload: {
@@ -41,7 +39,7 @@ const AddTask = () => {
         student_id: user.id,
         course_id: parseInt(course_id),
         progress_status: "Pending",
-        file_name: file ? file.name : null, // Store file name for visualization
+        file_name: file ? file.name : null,
       },
     });
     navigate("/tasks");
@@ -94,7 +92,7 @@ const AddTask = () => {
           <input
             type="file"
             name="file"
-            accept=".pdf,.doc,.docx,.jpg,.png" // Specify accepted file types
+            accept=".pdf,.doc,.docx,.jpg,.png"
             onChange={handleChange}
           />
         </div>

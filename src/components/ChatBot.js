@@ -14,7 +14,7 @@ const ChatBot = () => {
     // Add user message
     setMessages([...messages, { sender: "user", text: input }]);
 
-    // Mock bot response after a short delay
+    // Mock bot response
     setTimeout(() => {
       const botResponse = getBotResponse(input);
       setMessages((prevMessages) => [
@@ -32,9 +32,9 @@ const ChatBot = () => {
     }
   };
 
-  // Mock bot response logic
+  // Mock bot response
   const getBotResponse = (userInput) => {
-    // Simple keyword-based responses
+    // Hard-coded responses
     const input = userInput.toLowerCase();
     if (input.includes("hello") || input.includes("hi")) {
       return "Hi there! How can I help you with your registration?";

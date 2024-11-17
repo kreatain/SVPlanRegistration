@@ -7,12 +7,13 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // For simulation purposes only
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     first_name: "",
     last_name: "",
-    role: "student", // Default role
+    role: "student",
   });
 
   const { email, password, first_name, last_name, role } = formData;
@@ -23,7 +24,7 @@ const Register = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    // Simulate registration by dispatching a user creation action
+    // For simulation purposes only
     const newUser = {
       id: Date.now(),
       email,

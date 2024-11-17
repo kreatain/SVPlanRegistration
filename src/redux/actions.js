@@ -1,5 +1,3 @@
-// src/redux/actions.js
-
 // Action Types
 export const TOGGLE_TASK_COMPLETION = "TOGGLE_TASK_COMPLETION";
 export const ADD_TASK = "ADD_TASK";

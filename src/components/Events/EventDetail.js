@@ -37,7 +37,6 @@ const EventDetail = () => {
         <p>
           <strong>Created By:</strong> {event.admin_username}
         </p>
-        {/* Add more details or functionalities as needed */}
       </div>
     </div>
   );

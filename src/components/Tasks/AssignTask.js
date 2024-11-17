@@ -24,7 +24,7 @@ const AssignTask = () => {
 
   const handleAssign = (e) => {
     e.preventDefault();
-    // Simulate task assignment
+    // For simulation purposes only
     dispatch({
       type: "ASSIGN_TASK",
       payload: {

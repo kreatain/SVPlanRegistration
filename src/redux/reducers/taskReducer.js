@@ -1,10 +1,9 @@
-// src/redux/reducers/taskReducer.js
-
+// For simulation purposes only
 import { TOGGLE_TASK_COMPLETION, ADD_TASK, ASSIGN_TASK } from "../actions";
 
 const initialState = {
   tasks: [
-    // Initial mock tasks
+    // Mock tasks
     {
       id: 1,
       description: "Prepare for Math Exam",
@@ -43,7 +42,6 @@ export default function taskReducer(state = initialState, action) {
             : task
         ),
       };
-    // Add more cases as needed
     default:
       return state;
   }

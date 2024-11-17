@@ -1,5 +1,4 @@
-// src/redux/reducers/eventReducer.js
-
+// For simulation purposes only
 const initialState = {
   events: [
     {
@@ -21,7 +20,6 @@ const initialState = {
     { id: 101, course_name: "Mathematics" },
     { id: 102, course_name: "Science" },
     { id: 103, course_name: "History" },
-    // Add more courses as needed
   ],
 };
 

@@ -8,9 +8,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.auth);
 
+  // For simulation purposes only
   const [formData, setFormData] = useState({
     email: "",
-    password: "", // For simulation purposes only
+    password: "",
   });
 
   const [selectedUser, setSelectedUser] = useState("");
@@ -27,7 +28,7 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Simulate login by finding the user from mock data
+    // For simulation purposes only
     const user = users.find((user) => user.email === email);
 
     if (user && password === "password") {
