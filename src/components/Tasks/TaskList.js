@@ -12,7 +12,7 @@ const TaskList = () => {
 
   // Filter tasks based on user role
   const filteredTasks =
-    user.role === "admin"
+    user.role === "Admin"
       ? tasks // Admin sees all tasks
       : tasks.filter((task) => task.student_id === user.id); // Students see only their tasks
 
@@ -27,7 +27,7 @@ const TaskList = () => {
   return (
     <div className="task-container">
       <h2>Your Tasks</h2>
-      {user.role === "admin" ? (
+      {user.role === "Admin" ? (
         <Link to="/tasks/assign" className="btn-primary">
           Assign New Task
         </Link>

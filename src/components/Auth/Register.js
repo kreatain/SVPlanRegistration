@@ -1,40 +1,75 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 import "../../styles/Auth.css";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // For simulation purposes only
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     first_name: "",
     last_name: "",
-    role: "student",
+    role: "Student",
   });
 
   const { email, password, first_name, last_name, role } = formData;
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  // Handle registration submission
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // For simulation purposes only
-    const newUser = {
-      id: Date.now(),
+
+    console.log("Request Body:", {
       email,
+      password,
       first_name,
       last_name,
       role,
-    };
+    });
 
-    dispatch({ type: "LOGIN_SUCCESS", payload: newUser });
-    navigate("/events");
+    try {
+      // Step 1: Send signup request
+      await axios.post(`${apiUrl}/api/signup/`, {
+        email,
+        password,
+        first_name,
+        last_name,
+        role,
+      });
+
+      console.log("Signup successful");
+
+      // Step 2: Automatically login after successful registration
+      const loginResponse = await axios.post(`${apiUrl}/api/signin/`, {
+        email,
+        password,
+      });
+
+      console.log("Login response:", loginResponse.data);
+
+      // Step 3: Update Redux store and navigate to events
+      dispatch({ type: "LOGIN_SUCCESS", payload: loginResponse.data });
+      navigate("/events");
+    } catch (error) {
+      console.error("Registration failed:", error.response?.data || error.message);
+
+      // Show error to user
+      alert(
+        error.response?.data?.error
+          ? `Error: ${error.response.data.error}`
+          : "Registration failed. Please try again."
+      );
+    }
   };
 
   return (
@@ -88,8 +123,8 @@ const Register = () => {
         <div className="form-group">
           <label>User Role:</label>
           <select name="role" value={role} onChange={handleChange} required>
-            <option value="student">Student</option>
-            <option value="admin">Admin (Teacher)</option>
+            <option value="Student">Student</option>
+            <option value="Admin">Admin (Teacher)</option>
           </select>
         </div>
         <button type="submit" className="btn-primary">

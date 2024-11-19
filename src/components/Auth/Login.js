@@ -1,40 +1,56 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import axios from "axios";
 import "../../styles/Auth.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.auth);
 
-  // For simulation purposes only
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [selectedUser, setSelectedUser] = useState("");
-
   const { email, password } = formData;
+
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleUserSelect = (e) => {
-    setSelectedUser(e.target.value);
-  };
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // For simulation purposes only
-    const user = users.find((user) => user.email === email);
 
-    if (user && password === "password") {
-      dispatch({ type: "LOGIN_SUCCESS", payload: user });
+    try {
+      // Step 1: Login request
+      const response = await axios.post(`${apiUrl}/api/signin/`, {
+        email,
+        password,
+      });
+
+      console.log("Login response:", response.data);
+      const userData = response.data;
+
+      // Step 2: Add email and password to userData for storage in Redux
+      const userWithCredentials = {
+        ...userData,
+        email,
+        password,
+      };
+
+      // Step 3: Dispatch to Redux
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: userWithCredentials,
+      });
+
+      // Step 4: Redirect to events page
       navigate("/events");
-    } else {
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
       alert("Invalid credentials. Please try again.");
     }
   };
@@ -64,14 +80,6 @@ const Login = () => {
             required
             placeholder="Enter your password"
           />
-        </div>
-        <div className="form-group">
-          <label>Select User Type:</label>
-          <select value={selectedUser} onChange={handleUserSelect} required>
-            <option value="">--Select User--</option>
-            <option value="admin">Admin</option>
-            <option value="student">Student</option>
-          </select>
         </div>
         <button type="submit" className="btn-primary">
           Login

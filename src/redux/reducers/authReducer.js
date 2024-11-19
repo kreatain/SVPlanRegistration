@@ -3,16 +3,16 @@ const initialState = {
   loading: false,
   user: null,
   users: [
-    { id: 1, email: "admin@example.com", role: "admin" },
+    { id: 1, email: "admin@example.com", role: "Admin" },
     {
       id: 2,
       email: "student1@example.com",
-      role: "student",
+      role: "Student",
     },
     {
       id: 3,
       email: "student2@example.com",
-      role: "student",
+      role: "Student",
     },
   ],
 };

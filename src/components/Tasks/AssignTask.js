@@ -41,7 +41,7 @@ const AssignTask = () => {
   };
 
   // Redirect non-admin users
-  if (user.role !== "admin") {
+  if (user.role !== "Admin") {
     navigate("/tasks");
     return null;
   }

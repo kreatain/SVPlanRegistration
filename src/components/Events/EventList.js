@@ -10,7 +10,7 @@ const EventList = () => {
   return (
     <div className="event-container">
       <h2>Upcoming Events</h2>
-      {user.role === "admin" && (
+      {user.role === "Admin" && (
         <Link to="/events/create" className="btn-primary">
           Create New Event
         </Link>
