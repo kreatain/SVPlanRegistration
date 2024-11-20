@@ -14,9 +14,10 @@ const Register = () => {
     first_name: "",
     last_name: "",
     role: "Student",
+    department: "Khoury",
   });
 
-  const { email, password, first_name, last_name, role } = formData;
+  const { email, password, first_name, last_name, role, department } = formData;
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -35,6 +36,7 @@ const Register = () => {
       first_name,
       last_name,
       role,
+      department,
     });
 
     try {
@@ -45,6 +47,7 @@ const Register = () => {
         first_name,
         last_name,
         role,
+        department,
       });
 
       console.log("Signup successful");
@@ -61,7 +64,10 @@ const Register = () => {
       dispatch({ type: "LOGIN_SUCCESS", payload: loginResponse.data });
       navigate("/events");
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
 
       // Show error to user
       alert(
@@ -76,6 +82,7 @@ const Register = () => {
     <div className="auth-container">
       <h2>Register</h2>
       <form onSubmit={handleRegister} className="auth-form">
+        {/* Email */}
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -87,6 +94,7 @@ const Register = () => {
             placeholder="Enter your email"
           />
         </div>
+        {/* Password */}
         <div className="form-group">
           <label>Password:</label>
           <input
@@ -98,6 +106,7 @@ const Register = () => {
             placeholder="Create a password"
           />
         </div>
+        {/* First Name */}
         <div className="form-group">
           <label>First Name:</label>
           <input
@@ -109,6 +118,7 @@ const Register = () => {
             placeholder="Enter your first name"
           />
         </div>
+        {/* Last Name */}
         <div className="form-group">
           <label>Last Name:</label>
           <input
@@ -120,6 +130,7 @@ const Register = () => {
             placeholder="Enter your last name"
           />
         </div>
+        {/* Role Selection */}
         <div className="form-group">
           <label>User Role:</label>
           <select name="role" value={role} onChange={handleChange} required>
@@ -127,6 +138,22 @@ const Register = () => {
             <option value="Admin">Admin (Teacher)</option>
           </select>
         </div>
+        {/* Department Selection */}
+        <div className="form-group">
+          <label>Department:</label>
+          <select
+            name="department"
+            value={department}
+            onChange={handleChange}
+            required
+          >
+            <option value="Khoury">Khoury</option>
+            <option value="College of Engineering">
+              College of Engineering
+            </option>
+          </select>
+        </div>
+        {/* Register Button */}
         <button type="submit" className="btn-primary">
           Register
         </button>

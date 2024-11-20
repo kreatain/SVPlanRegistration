@@ -16,7 +16,7 @@
 
 .event-container h2 {
   font-size: 24px;
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   margin-bottom: var(--spacing-medium);
   font-weight: 300;
   font-family: var(--font-family);
@@ -24,7 +24,7 @@
 
 /* Create Event Button */
 .event-container .btn-primary {
-  margin-bottom: var(--spacing-medium); /* Add space below the button */
+  margin-bottom: var(--spacing-medium);
 }
 
 /* Event List */
@@ -66,7 +66,7 @@
 /* Scrollbar Styling */
 /* For Webkit Browsers (Chrome, Safari) */
 .event-container::-webkit-scrollbar {
-  width: 8px; /* Match input box height */
+  width: 8px;
 }
 
 .event-container::-webkit-scrollbar-track {
@@ -80,6 +80,16 @@
 
 /* For Firefox */
 .event-container {
-  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--background-color);
+}
+
+.event-card.overdue {
+  border-left: 5px solid red;
+  background-color: #ffe6e6;
+}
+
+.event-card.attended {
+  border-left: 5px solid green;
+  background-color: #e6ffe6;
 }

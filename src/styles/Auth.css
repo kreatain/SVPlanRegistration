@@ -8,7 +8,7 @@
   padding: var(--spacing-large);
   border-radius: var(--border-radius-large);
   box-shadow: 0 4px 6px var(--shadow-color);
-  max-width: 350px; /* Reduced max-width */
+  max-width: 350px;
   width: 90%;
   margin: var(--spacing-large) auto;
   text-align: center;
@@ -16,7 +16,7 @@
 
 .auth-container h2 {
   font-size: 24px;
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   margin-bottom: var(--spacing-medium);
   font-weight: 300;
   font-family: var(--font-family);
@@ -26,20 +26,20 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the form */
+  align-items: center;
 }
 
 .form-group {
   margin-bottom: var(--spacing-medium);
-  width: 100%; /* Full width */
-  max-width: 300px; /* Shortened input fields */
+  width: 100%;
+  max-width: 300px;
   text-align: left;
 }
 
 .form-group label {
   display: block;
   margin-bottom: var(--spacing-small);
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   font-weight: 300;
 }
 

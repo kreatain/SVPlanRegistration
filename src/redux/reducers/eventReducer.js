@@ -1,3 +1,5 @@
+import { TOGGLE_EVENT_ATTENDANCE } from "../actions";
+
 // For simulation purposes only
 const initialState = {
   events: [
@@ -7,6 +9,7 @@ const initialState = {
       description: "An advanced workshop on calculus.",
       happening_date: "2023-11-20",
       entry_date: "2023-11-10",
+      attended: false,
     },
     {
       id: 2,
@@ -14,6 +17,7 @@ const initialState = {
       description: "Annual science exhibition.",
       happening_date: "2023-12-05",
       entry_date: "2023-11-25",
+      attended: false,
     },
   ],
   courses: [
@@ -25,7 +29,16 @@ const initialState = {
 
 export default function eventReducer(state = initialState, action) {
   switch (action.type) {
-    // Define actions as needed
+    case TOGGLE_EVENT_ATTENDANCE:
+      return {
+        ...state,
+        events: state.events.map((event) =>
+          event.id === action.payload
+            ? { ...event, attended: !event.attended }
+            : event
+        ),
+      };
+    // Define other actions as needed
     default:
       return state;
   }

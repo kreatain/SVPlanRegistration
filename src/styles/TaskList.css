@@ -16,7 +16,7 @@
 
 .task-container h2 {
   font-size: 24px;
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   margin-bottom: var(--spacing-medium);
   font-weight: 300;
   font-family: var(--font-family);
@@ -24,7 +24,7 @@
 
 /* Add/Assign Task Button */
 .task-container .btn-primary {
-  margin-bottom: var(--spacing-medium * 2); /* Add space below the button */
+  margin-bottom: var(--spacing-medium * 2);
 }
 
 /* Task List */
@@ -33,7 +33,7 @@
   flex-direction: column;
   gap: var(--spacing-medium);
   justify-content: center;
-  margin-bottom: var(--spacing-large); /* Add space between task lists */
+  margin-bottom: var(--spacing-large);
 }
 
 .task-list h3 {
@@ -53,7 +53,7 @@
   width: 100%;
   max-width: 600px;
   text-align: left;
-  position: relative; /* For positioning the checkbox */
+  position: relative;
   transition: background-color var(--transition-speed) ease;
   margin: 0 auto;
 }
@@ -64,14 +64,14 @@
 
 .task-card h3 {
   font-size: 20px;
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   margin-bottom: var(--spacing-small);
   font-weight: 300;
 }
 
 .task-card p {
   font-size: 16px;
-  color: var(--text-color); /* Black */
+  color: var(--text-color);
   margin-bottom: var(--spacing-small);
 }
 
@@ -82,20 +82,20 @@
   right: var(--spacing-medium);
   transform: scale(1.5);
   cursor: pointer;
-  accent-color: var(--primary-color); /* For modern browsers */
+  accent-color: var(--primary-color);
 }
 
 /* Completed Task Styles */
 .task-card.completed h3,
 .task-card.completed p {
   text-decoration: line-through;
-  color: var(--secondary-text); /* Medium Gray */
+  color: var(--secondary-text);
 }
 
 /* Scrollbar Styling */
 /* For Webkit Browsers (Chrome, Safari) */
 .task-container::-webkit-scrollbar {
-  width: 8px; /* Match input box height */
+  width: 8px;
 }
 
 .task-container::-webkit-scrollbar-track {
@@ -116,6 +116,11 @@
 }
 
 .task-card a:hover {
-  color: #0056b3; /* Darker shade on hover */
+  color: #0056b3;
   text-decoration: underline;
+}
+
+.task-card.overdue {
+  border-left: 5px solid red;
+  background-color: #ffe6e6;
 }
