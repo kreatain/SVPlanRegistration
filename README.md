@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# SV Plan Registration System - Front End Documentation
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [Features](#features)
+3. [Components](#components)
+4. [State Management](#state-management)
+5. [Routing](#routing)
+6. [Styling](#styling)
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Project Overview
 
-### `npm start`
+The **SV Plan Registration System** front end is built with **React** and **Redux**, offering a user-friendly interface for managing events, event notifications, and tasks. It aims to provide a comprehensive registration and management experience for students and administrators.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **User Authentication**
+  - Register and log in using email.
+  - Protected routes accessible only to authenticated users.
 
-### `npm test`
+- **Navbar**
+  - Navigation bar based on user authentication status.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Event Management**
+  - View, create, and manage events for Admin and view events for Students.
+  - Detailed event information pages.
 
-### `npm run build`
+- **Task Management**
+  - Students can add new tasks with descriptions, due dates, and file uploads (accepts PDF, DOCX, PNG, and JPG).
+  - View and manage pending and completed tasks.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Notifications**
+  - Students can receive and view notifications related to events posted by Admin.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **ChatBot**
+  - Interactive chatbot interface for real-time assistance.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Components
 
-### `npm run eject`
+### Authentication Components
+- **Login**
+  - Path: `./src/components/Auth/login`
+  - Function: User login functionality.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Register**
+  - Path: `./src/components/Auth/register`
+  - Function: User registration functionality.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Navbar
+- **Location:** `./src/components/Navbar.js`
+- **Function:** Provides navigation links based on user role and authentication status.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Event Components
+- **EventList**
+  - Path: `./src/components/Events/EventList`
+  - Function: Displays a list of all events.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **CreateEvent**
+  - Path: `./src/components/Events/CreateEvent`
+  - Function: Allows admins to create new events.
 
-## Learn More
+- **EventDetail**
+  - Path: `./src/components/Events/EventDetail`
+  - Function: Shows detailed information about a specific event.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Task Components
+- **TaskList**
+  - Path: `./src/components/Tasks/TaskList`
+  - Function: Lists all tasks for the authenticated user.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **AddTask**
+  - Path: `./src/components/Tasks/AddTask`
+  - Function: Enables users to add new tasks with file uploads.
 
-### Code Splitting
+- **AssignTask**
+  - Path: `./src/components/Tasks/AssignTask`
+  - Function: Allows students to assign tasks to a specific course.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Notification
+- **Path:** `./src/components/Notification/Notification`
+- **Function:** Displays user-specific notifications.
 
-### Analyzing the Bundle Size
+### ChatBot
+- **Location:** `./src/components/ChatBot.js`
+- **Function:** Provides an interactive chatbot interface for user assistance.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### PrivateRoute
+- **Location:** `./src/components/PrivateRoute.js`
+- **Function:** Protects routes, ensuring only authenticated users can access them.
 
-### Making a Progressive Web App
+## State Management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Redux Store**
+  - **Location:** `./src/redux/store.js`
+  - **Function:** Centralizes application state for consistent data flow.
 
-### Advanced Configuration
+- **Actions & Reducers**
+  - **Location:** `./src/redux/actions.js` and `./src/redux/reducers/`
+  - **Function:** Manage state changes in response to user interactions and API responses.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Routing
 
-### Deployment
+- **React Router**
+  - **Configuration:** Defined in `./src/App.js`
+  - **Protected Routes:** Implemented using the `PrivateRoute` component to secure sensitive pages.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Styling
 
-### `npm run build` fails to minify
+- **CSS Files**
+  - **Location:** `./src/styles/`
+  - **Function:** Provides reusable styles for components.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Style Files:**
+  - `App.css`
+  - `Navbar.css`
+  - `Auth.css`
+  - `AddTask.css`
+  - `TaskList.css`
+  - `CreateEvent.css`
+  - `EventDetail.css`
+  - `AssignTask.css`
+  - `Notification.css`
+  - `ChatBot.css`
+  - `Buttons.css`
+  - `Variables.css`
