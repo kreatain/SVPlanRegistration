@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import "../../styles/TaskList.css";
-import { toggleTaskCompletion } from "../../redux/actions"; // Correct import
+import { toggleTaskCompletion } from "../../redux/actions";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -10,14 +10,35 @@ const TaskList = () => {
   const { user } = useSelector((state) => state.auth);
   const { courses } = useSelector((state) => state.event);
 
+  // Define fixed categories
+  const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
+
+  // State for selected category filter
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Define categories, including "All"
+  const categories = ["All", ...TASK_CATEGORIES];
+
+  // Handler for category change
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
   // Get current date and time
   const currentDate = new Date();
 
-  // Filter tasks based on user role
+  // Filter tasks based on user role and selected category
   const filteredTasks =
     user.role === "Admin"
-      ? tasks // Admin sees all tasks
-      : tasks.filter((task) => task.student_id === user.id); // Students see only their tasks
+      ? selectedCategory === "All"
+        ? tasks
+        : tasks.filter((task) => task.category === selectedCategory)
+      : selectedCategory === "All"
+      ? tasks.filter((task) => task.student_id === user.id)
+      : tasks.filter(
+          (task) =>
+            task.student_id === user.id && task.category === selectedCategory
+        );
 
   // Separate completed and pending tasks
   const completedTasks = filteredTasks.filter((task) => task.completed);
@@ -51,6 +72,23 @@ const TaskList = () => {
           Add New Task
         </Link>
       )}
+
+      {/* Advanced Filter Bar */}
+      <div className="filter-bar">
+        <label htmlFor="category-filter">Filter by Category:</label>
+        <select
+          id="category-filter"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="task-list">
         {/* Overdue Tasks Section */}
         {overdueTasks.length > 0 && (
@@ -71,6 +109,9 @@ const TaskList = () => {
                   aria-label={`Mark task "${task.description}" as completed`}
                 />
                 <h3>{task.description}</h3>
+                <p>
+                  <strong>Category:</strong> {task.category}
+                </p>
                 <p>
                   <strong>Due Date:</strong>{" "}
                   {new Date(task.due_date).toLocaleString()}
@@ -114,6 +155,9 @@ const TaskList = () => {
               />
               <h3>{task.description}</h3>
               <p>
+                <strong>Category:</strong> {task.category}
+              </p>
+              <p>
                 <strong>Due Date:</strong>{" "}
                 {new Date(task.due_date).toLocaleString()}
               </p>
@@ -156,6 +200,9 @@ const TaskList = () => {
                 aria-label={`Mark task "${task.description}" as uncompleted`}
               />
               <h3>{task.description}</h3>
+              <p>
+                <strong>Category:</strong> {task.category}
+              </p>
               <p>
                 <strong>Due Date:</strong>{" "}
                 {new Date(task.due_date).toLocaleString()}

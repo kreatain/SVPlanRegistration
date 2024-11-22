@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import "../../styles/AddTask.css";
-import { addTask } from "../../redux/actions"; // Import the addTask action creator
+import { addTask } from "../../redux/actions";
 
 const AddTask = () => {
   const navigate = useNavigate();
@@ -10,14 +10,18 @@ const AddTask = () => {
   const { user } = useSelector((state) => state.auth);
   const { courses } = useSelector((state) => state.event);
 
+  // Define fixed categories
+  const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
+
   const [formData, setFormData] = useState({
     description: "",
     due_date: "",
     course_id: "",
     file: null,
+    category: TASK_CATEGORIES[0],
   });
 
-  const { description, due_date, course_id, file } = formData;
+  const { description, due_date, course_id, file, category } = formData;
 
   // State to manage edit mode for AI-generated fields
   const [isDescriptionEditable, setIsDescriptionEditable] = useState(false);
@@ -26,7 +30,6 @@ const AddTask = () => {
   // Effect to simulate AI processing when a file is uploaded
   useEffect(() => {
     if (file) {
-      // Simulate AI processing delay
       setTimeout(() => {
         // Mock AI-generated description and due date
         const aiGeneratedDescription = `Auto-generated description based on the uploaded file: ${file.name}`;
@@ -37,16 +40,16 @@ const AddTask = () => {
           description: aiGeneratedDescription,
           due_date: aiGeneratedDueDate,
         }));
-      }, 1000); // Simulate a 1-second delay
+      }, 1000);
     }
   }, [file]);
 
-  // Function to generate a mock due date (e.g., 7 days from today)
+  // Function to generate a mock due date
   const generateDueDate = () => {
     const today = new Date();
     const dueDate = new Date(today);
     dueDate.setDate(today.getDate() + 7);
-    return dueDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    return dueDate.toISOString().split("T")[0];
   };
 
   // Handle input changes
@@ -62,20 +65,29 @@ const AddTask = () => {
   // Handle task submission
   const handleAddTask = (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!description || !due_date || !category) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
     // Prepare task data
     const taskData = {
       id: Date.now(),
       description,
       due_date,
       student_id: user.id,
-      course_id: course_id ? parseInt(course_id) : null, // Handle optional course_id
+      course_id: course_id ? parseInt(course_id) : null,
       progress_status: "Pending",
       file_name: file ? file.name : null,
+      category,
     };
+
     // Dispatch the addTask action with formData
     dispatch(addTask(taskData));
     navigate("/tasks");
-    alert("Task Added Successfully! (Mock)");
+    alert("Task Added Successfully!");
   };
 
   // Handlers to toggle edit mode
@@ -187,7 +199,24 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* 7. Submit Button */}
+        {/* 7. Select Category */}
+        <div className="form-group">
+          <label>Select Category:</label>
+          <select
+            name="category"
+            value={category}
+            onChange={handleChange}
+            required
+          >
+            {TASK_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 8. Submit Button */}
         <button type="submit" className="btn-primary">
           Add Task
         </button>

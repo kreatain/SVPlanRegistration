@@ -60,6 +60,14 @@
   outline: none;
 }
 
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
 /* Buttons */
 .btn-secondary {
   /* Styles inherited from Buttons.css */

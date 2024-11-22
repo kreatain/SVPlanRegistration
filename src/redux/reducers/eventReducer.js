@@ -5,19 +5,23 @@ const initialState = {
   events: [
     {
       id: 1,
-      name: "Math Workshop",
-      description: "An advanced workshop on calculus.",
-      happening_date: "2023-11-20",
-      entry_date: "2023-11-10",
+      name: "Tech Career Fair",
+      description: "Connecting students with top tech companies.",
+      happening_date: "2024-12-15T10:00:00",
+      entry_date: "2024-11-01T00:00:00",
+      admin_username: "admin1",
       attended: false,
+      category: "Career Fair",
     },
     {
       id: 2,
-      name: "Science Fair",
-      description: "Annual science exhibition.",
-      happening_date: "2023-12-05",
-      entry_date: "2023-11-25",
-      attended: false,
+      name: "Annual Research Showcase",
+      description: "Presenting groundbreaking research projects.",
+      happening_date: "2024-11-20T09:00:00",
+      entry_date: "2024-10-15T00:00:00",
+      admin_username: "admin2",
+      attended: true,
+      category: "Research Showcase",
     },
   ],
   courses: [
@@ -38,7 +42,6 @@ export default function eventReducer(state = initialState, action) {
             : event
         ),
       };
-    // Define other actions as needed
     default:
       return state;
   }

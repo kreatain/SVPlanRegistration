@@ -4,7 +4,7 @@
 /* Primary Button */
 .btn-primary {
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: #1f7c8c;
   border: none;
   padding: 12px 0;
   border-radius: var(--border-radius-medium);
@@ -29,7 +29,7 @@
 /* Secondary Button */
 .btn-secondary {
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: #1f7c8c;
   border: none;
   padding: 10px 20px;
   border-radius: var(--border-radius-medium);

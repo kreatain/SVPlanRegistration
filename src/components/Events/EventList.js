@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import "../../styles/EventList.css";
@@ -11,15 +11,41 @@ const EventList = () => {
   const { events } = useSelector((state) => state.event);
   const { user } = useSelector((state) => state.auth);
 
+  // Define fixed categories
+  const EVENT_CATEGORIES = [
+    "Career",
+    "Study",
+    "Research",
+    "Entertainment",
+    "Exercise",
+  ];
+
+  // State for selected category filter
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Define categories, including "All"
+  const categories = ["All", ...EVENT_CATEGORIES];
+
+  // Handler for category change
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  // Filter events based on selected category
+  const filteredEvents =
+    selectedCategory === "All"
+      ? events
+      : events.filter((event) => event.category === selectedCategory);
+
   // Get current date
   const currentDate = new Date();
 
   // Separate events into categories
-  const attendedEvents = events.filter((event) => event.attended);
-  const upcomingEvents = events.filter(
+  const attendedEvents = filteredEvents.filter((event) => event.attended);
+  const upcomingEvents = filteredEvents.filter(
     (event) => !event.attended && new Date(event.happening_date) >= currentDate
   );
-  const overdueEvents = events.filter(
+  const overdueEvents = filteredEvents.filter(
     (event) => !event.attended && new Date(event.happening_date) < currentDate
   );
 
@@ -37,6 +63,22 @@ const EventList = () => {
         </Link>
       )}
 
+      {/* Advanced Filter Bar */}
+      <div className="filter-bar">
+        <label htmlFor="category-filter">Filter by Category:</label>
+        <select
+          id="category-filter"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Overdue Events Section */}
       {overdueEvents.length > 0 && (
         <div className="event-list overdue-events">
@@ -45,6 +87,9 @@ const EventList = () => {
             <div key={event.id} className="event-card overdue">
               <h3>{event.name}</h3>
               <p>{event.description}</p>
+              <p>
+                <strong>Category:</strong> {event.category}
+              </p>
               <p>
                 <strong>Date:</strong>{" "}
                 {new Date(event.happening_date).toLocaleString()}
@@ -71,6 +116,9 @@ const EventList = () => {
             <div key={event.id} className="event-card">
               <h3>{event.name}</h3>
               <p>{event.description}</p>
+              <p>
+                <strong>Category:</strong> {event.category}
+              </p>
               <p>
                 <strong>Date:</strong>{" "}
                 {new Date(event.happening_date).toLocaleString()}
@@ -100,6 +148,9 @@ const EventList = () => {
               <h3>{event.name}</h3>
               <p>{event.description}</p>
               <p>
+                <strong>Category:</strong> {event.category}
+              </p>
+              <p>
                 <strong>Date:</strong>{" "}
                 {new Date(event.happening_date).toLocaleString()}
               </p>
@@ -119,5 +170,59 @@ const EventList = () => {
     </div>
   );
 };
+
+// Mock Data Setup
+const mockEvents = [
+  {
+    id: 1,
+    name: "Tech Career Fair",
+    description: "Connecting students with top tech companies.",
+    happening_date: "2024-12-15T10:00:00",
+    entry_date: "2024-11-01T00:00:00",
+    admin_username: "admin1",
+    attended: false,
+    category: "Career",
+  },
+  {
+    id: 2,
+    name: "Annual Research Showcase",
+    description: "Presenting groundbreaking research projects.",
+    happening_date: "2024-11-20T09:00:00",
+    entry_date: "2024-10-15T00:00:00",
+    admin_username: "admin2",
+    attended: true,
+    category: "Research",
+  },
+  {
+    id: 3,
+    name: "Campus Study Group",
+    description: "Group study sessions for final exams.",
+    happening_date: "2024-11-25T14:00:00",
+    entry_date: "2024-11-10T00:00:00",
+    admin_username: "admin3",
+    attended: false,
+    category: "Study",
+  },
+  {
+    id: 4,
+    name: "Music Concert",
+    description: "Enjoy live performances by local bands.",
+    happening_date: "2024-12-05T19:00:00",
+    entry_date: "2024-11-05T00:00:00",
+    admin_username: "admin4",
+    attended: false,
+    category: "Entertainment",
+  },
+  {
+    id: 5,
+    name: "Yoga Session",
+    description: "Morning yoga for relaxation and fitness.",
+    happening_date: "2024-11-18T07:00:00",
+    entry_date: "2024-11-01T00:00:00",
+    admin_username: "admin5",
+    attended: true,
+    category: "Exercise",
+  },
+];
 
 export default EventList;

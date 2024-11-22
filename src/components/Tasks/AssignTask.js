@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import "../../styles/AssignTask.css";
+import { assignTask } from "../../redux/actions";
 
 const AssignTask = () => {
   const navigate = useNavigate();
@@ -9,14 +10,18 @@ const AssignTask = () => {
   const { user, users } = useSelector((state) => state.auth);
   const { courses } = useSelector((state) => state.event);
 
+  // Define fixed categories
+  const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
+
   const [formData, setFormData] = useState({
     description: "",
     due_date: "",
     student_id: "",
     course_id: "",
+    category: TASK_CATEGORIES[0],
   });
 
-  const { description, due_date, student_id, course_id } = formData;
+  const { description, due_date, student_id, course_id, category } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,20 +29,28 @@ const AssignTask = () => {
 
   const handleAssign = (e) => {
     e.preventDefault();
-    // For simulation purposes only
-    dispatch({
-      type: "ASSIGN_TASK",
-      payload: {
+
+    // Basic validation
+    if (!description || !due_date || !student_id || !course_id || !category) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Dispatch the assignTask action with the new task data
+    dispatch(
+      assignTask({
         id: Date.now(),
         description,
         due_date,
         student_id: parseInt(student_id),
         course_id: parseInt(course_id),
         progress_status: "Pending",
-      },
-    });
+        category,
+      })
+    );
+
+    alert("Task Assigned Successfully!");
     navigate("/tasks");
-    alert("Task Assigned Successfully! (Mock)");
   };
 
   // Redirect non-admin users
@@ -100,6 +113,21 @@ const AssignTask = () => {
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.course_name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Select Category:</label>
+          <select
+            name="category"
+            value={category}
+            onChange={handleChange}
+            required
+          >
+            {TASK_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
               </option>
             ))}
           </select>

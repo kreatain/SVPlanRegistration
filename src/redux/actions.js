@@ -5,6 +5,7 @@ export const ASSIGN_TASK = "ASSIGN_TASK";
 
 // New Event Action Types
 export const TOGGLE_EVENT_ATTENDANCE = "TOGGLE_EVENT_ATTENDANCE";
+export const ADD_NEW_EVENT = "ADD_NEW_EVENT"; // Newly added
 
 // Action Creators
 export const toggleTaskCompletion = (taskId) => ({
@@ -26,4 +27,10 @@ export const assignTask = (task) => ({
 export const toggleEventAttendance = (eventId) => ({
   type: TOGGLE_EVENT_ATTENDANCE,
   payload: eventId,
+});
+
+export const addNewEvent = (event) => ({
+  // Newly added
+  type: ADD_NEW_EVENT,
+  payload: event,
 });
