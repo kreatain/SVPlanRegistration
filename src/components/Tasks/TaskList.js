@@ -63,15 +63,11 @@ const TaskList = () => {
   return (
     <div className="task-container">
       <h2>Your Tasks</h2>
-      {user.role === "Admin" ? (
-        <Link to="/tasks/assign" className="btn-primary">
-          Assign New Task
-        </Link>
-      ) : (
+      { 
         <Link to="/tasks/add" className="btn-primary">
           Add New Task
         </Link>
-      )}
+      }
 
       {/* Advanced Filter Bar */}
       <div className="filter-bar">

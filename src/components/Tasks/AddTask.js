@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import "../../styles/AddTask.css";
 import { addTask } from "../../redux/actions";
+import { uploadFile } from "../../apiService"; // Assuming `uploadFile` is exported from your API file
 
 const AddTask = () => {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const AddTask = () => {
   const { user } = useSelector((state) => state.auth);
   const { courses } = useSelector((state) => state.event);
 
-  // Define fixed categories
   const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
 
   const [formData, setFormData] = useState({
@@ -23,56 +23,58 @@ const AddTask = () => {
 
   const { description, due_date, course_id, file, category } = formData;
 
-  // State to manage edit mode for AI-generated fields
-  const [isDescriptionEditable, setIsDescriptionEditable] = useState(false);
-  const [isDueDateEditable, setIsDueDateEditable] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  // Effect to simulate AI processing when a file is uploaded
-  useEffect(() => {
-    if (file) {
-      setTimeout(() => {
-        // Mock AI-generated description and due date
-        const aiGeneratedDescription = `Auto-generated description based on the uploaded file: ${file.name}`;
-        const aiGeneratedDueDate = generateDueDate();
-
-        setFormData((prevData) => ({
-          ...prevData,
-          description: aiGeneratedDescription,
-          due_date: aiGeneratedDueDate,
-        }));
-      }, 1000);
-    }
-  }, [file]);
-
-  // Function to generate a mock due date
-  const generateDueDate = () => {
-    const today = new Date();
-    const dueDate = new Date(today);
-    dueDate.setDate(today.getDate() + 7);
-    return dueDate.toISOString().split("T")[0];
-  };
-
-  // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
-    if (name === "file") {
-      setFormData({ ...formData, file: files[0] });
+
+    if (name === "file" && files && files[0]) {
+      const file = files[0];
+      setUploading(true); // Show loading indicator
+
+      try {
+        // Convert file to Base64
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          
+          const base64File = reader.result.split(",")[1]; // Remove the prefix
+          console.log("Base64 file content:", base64File);
+          // Call the `uploadFile` API
+          const response = await uploadFile(user.email, base64File);
+
+          if (response && response.data) {
+            const { task, file: uploadedFile } = response.data;
+
+            // Update form fields with API response
+            setFormData((prevData) => ({
+              ...prevData,
+              description: task.description || prevData.description,
+              due_date: task.dueDate || prevData.due_date,
+              file: uploadedFile.filePath, // Use the file path from the API
+            }));
+          }
+        };
+
+        reader.readAsDataURL(file); // Convert file to Base64
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        alert("File upload failed. Please try again.");
+      } finally {
+        setUploading(false); // Hide loading indicator
+      }
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  // Handle task submission
   const handleAddTask = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!description || !due_date || !category) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    // Prepare task data
     const taskData = {
       id: Date.now(),
       description,
@@ -80,30 +82,19 @@ const AddTask = () => {
       student_id: user.id,
       course_id: course_id ? parseInt(course_id) : null,
       progress_status: "Pending",
-      file_name: file ? file.name : null,
+      file: file, // Use the file path returned from the API
       category,
     };
 
-    // Dispatch the addTask action with formData
     dispatch(addTask(taskData));
     navigate("/tasks");
     alert("Task Added Successfully!");
-  };
-
-  // Handlers to toggle edit mode
-  const handleEditDescription = () => {
-    setIsDescriptionEditable(true);
-  };
-
-  const handleEditDueDate = () => {
-    setIsDueDateEditable(true);
   };
 
   return (
     <div className="add-task-container">
       <h2>Add New Task</h2>
       <form onSubmit={handleAddTask} className="add-task-form">
-        {/* 1. File Upload Field (Moved to Top) */}
         <div className="form-group">
           <label>Upload File:</label>
           <input
@@ -112,85 +103,43 @@ const AddTask = () => {
             accept=".pdf,.doc,.docx,.jpg,.png"
             onChange={handleChange}
           />
-          <p className="ai-message">
-            If you choose to upload a file, AI can help generate the assignment
-            description and due date after uploading.
-          </p>
+          {uploading && <p>Uploading file... Please wait.</p>}
         </div>
 
-        {/* 2. AI-Generated Description Box */}
-        {file && (
-          <div className="ai-generated-box">
-            <h3>AI Generated Description</h3>
-            <textarea
-              name="description"
-              value={description}
-              onChange={handleChange}
-              readOnly={!isDescriptionEditable}
-              placeholder="AI-generated description will appear here..."
-            ></textarea>
-            {!isDescriptionEditable && (
-              <button
-                type="button"
-                onClick={handleEditDescription}
-                className="btn-secondary"
-              >
-                Edit Description
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* 3. AI-Generated Due Date Box */}
-        {file && (
-          <div className="ai-generated-box">
-            <h3>AI Generated Due Date</h3>
-            <input
-              type="date"
-              name="due_date"
-              value={due_date}
-              onChange={handleChange}
-              readOnly={!isDueDateEditable}
-            />
-            {!isDueDateEditable && (
-              <button
-                type="button"
-                onClick={handleEditDueDate}
-                className="btn-secondary"
-              >
-                Edit Due Date
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* 4. Task Description (Optional) */}
         <div className="form-group">
           <label>Task Description:</label>
           <textarea
             name="description"
             value={description}
-            onChange={handleChange}
-            placeholder="Enter task description (optional)"
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            placeholder="Enter task description"
           ></textarea>
         </div>
 
-        {/* 5. Due Date (Optional) */}
         <div className="form-group">
           <label>Due Date:</label>
           <input
             type="date"
             name="due_date"
             value={due_date}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, due_date: e.target.value })
+            }
           />
         </div>
 
-        {/* 6. Select Course (Optional) */}
         <div className="form-group">
           <label>Select Course:</label>
-          <select name="course_id" value={course_id} onChange={handleChange}>
-            <option value="">--Select Course (optional)--</option>
+          <select
+            name="course_id"
+            value={course_id}
+            onChange={(e) =>
+              setFormData({ ...formData, course_id: e.target.value })
+            }
+          >
+            <option value="">--Select Course--</option>
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.course_name}
@@ -199,13 +148,14 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* 7. Select Category */}
         <div className="form-group">
           <label>Select Category:</label>
           <select
             name="category"
             value={category}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
             required
           >
             {TASK_CATEGORIES.map((cat) => (
@@ -216,9 +166,8 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* 8. Submit Button */}
-        <button type="submit" className="btn-primary">
-          Add Task
+        <button type="submit" className="btn-primary" disabled={uploading}>
+          {uploading ? "Processing..." : "Add Task"}
         </button>
       </form>
       <Link to="/tasks" className="btn-secondary">

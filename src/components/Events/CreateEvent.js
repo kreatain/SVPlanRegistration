@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import { publishEvent } from "../../apiService"; 
 import "../../styles/CreateEvent.css";
 import { addNewEvent } from "../../redux/actions";
 
@@ -10,7 +10,6 @@ const CreateEvent = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  // Define fixed categories
   const EVENT_CATEGORIES = [
     "Career",
     "Study",
@@ -19,7 +18,6 @@ const CreateEvent = () => {
     "Exercise",
   ];
 
-  // Updated formData to include category
   const [formData, setFormData] = useState({
     event_name: "",
     event_description: "",
@@ -29,7 +27,6 @@ const CreateEvent = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const {
     event_name,
@@ -39,53 +36,32 @@ const CreateEvent = () => {
     category,
   } = formData;
 
-  // Handler for input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handler for form submission
   const handlePublish = async (e) => {
     e.preventDefault();
-
-    if (!user || !user.email || !user.password) {
-      alert("Invalid user credentials. Please log in again.");
-      return;
-    }
-
-    const base64Credentials = btoa(`${user.email}:${user.password}`);
 
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        `${apiUrl}/api/publishevent/`,
-        {
-          event_name,
-          event_description,
-          event_time,
-          event_location,
-          category,
-        },
-        {
-          headers: {
-            Authorization: `Basic ${base64Credentials}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await publishEvent({
+        event_name,
+        event_description,
+        event_time,
+        event_location,
+        event_category: category,
+      });
 
-      console.log("Publish Event response:", response.data);
+      console.log("Publish Event response:", response);
 
       dispatch(addNewEvent(response.data));
 
       alert("Event published successfully!");
       navigate("/events");
     } catch (error) {
-      console.error(
-        "Publish Event failed:",
-        error.response?.data || error.message
-      );
+      console.error("Publish Event failed:", error.response?.data || error.message);
       alert(
         error.response?.data?.message ||
           "Failed to publish event. Please ensure you have Admin permissions and try again."
@@ -170,18 +146,6 @@ const CreateEvent = () => {
       </button>
     </div>
   );
-};
-
-// Mock Data Setup
-const mockCreateEvent = {
-  id: 6,
-  name: "Evening Yoga",
-  description: "Relax with a session of yoga in the evening.",
-  happening_date: "2024-11-22T18:00:00",
-  entry_date: "2024-11-15T00:00:00",
-  admin_username: "admin6",
-  attended: false,
-  category: "Exercise",
 };
 
 export default CreateEvent;

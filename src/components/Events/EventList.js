@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { listEvents, updateEventStatus } from "../../apiService"; 
 import "../../styles/EventList.css";
 
-// Import action to toggle attended status
-import { toggleEventAttendance } from "../../redux/actions";
-
 const EventList = () => {
-  const dispatch = useDispatch();
-  const { events } = useSelector((state) => state.event);
   const { user } = useSelector((state) => state.auth);
 
-  // Define fixed categories
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const EVENT_CATEGORIES = [
     "Career",
     "Study",
@@ -23,36 +22,70 @@ const EventList = () => {
   // State for selected category filter
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Define categories, including "All"
   const categories = ["All", ...EVENT_CATEGORIES];
+  
 
-  // Handler for category change
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  // Filter events based on selected category
+      try {
+        const response = await listEvents();
+        console.log("Fetched events:", response.data.events);
+        setEvents(response.data.events); 
+      } catch (error) {
+        console.error("Failed to fetch events:", error.response?.data || error.message);
+        setError("Failed to fetch events. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
+  try {
+    if (newStatus === "Unattended") {
+      const currentDateTime = new Date();
+      newStatus = new Date(eventTime) < currentDateTime ? "Overdue" : "Upcoming";
+    }
+
+    const response = await updateEventStatus(eventId, { status: newStatus });
+    console.log(`Event ${eventId} status updated to ${newStatus}:`, response.data);
+
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.event_id === eventId ? { ...event, event_status: newStatus } : event
+      )
+    );
+
+    alert(`Event status updated to ${newStatus}`);
+  } catch (error) {
+    console.error(`Failed to update status for event ${eventId}:`, error.response?.data || error.message);
+    alert("Failed to update event status. Please try again.");
+  }
+};
+
   const filteredEvents =
     selectedCategory === "All"
       ? events
-      : events.filter((event) => event.category === selectedCategory);
+      : events.filter((event) => event.event_category === selectedCategory);
 
-  // Get current date
   const currentDate = new Date();
 
-  // Separate events into categories
-  const attendedEvents = filteredEvents.filter((event) => event.attended);
-  const upcomingEvents = filteredEvents.filter(
-    (event) => !event.attended && new Date(event.happening_date) >= currentDate
-  );
-  const overdueEvents = filteredEvents.filter(
-    (event) => !event.attended && new Date(event.happening_date) < currentDate
-  );
+  const attendedEvents = filteredEvents.filter((event) => event.event_status === "Attended");
+  const upcomingEvents = filteredEvents.filter((event) => event.event_status === "Upcoming");
+  const overdueEvents = filteredEvents.filter((event) => event.event_status === "Overdue");
 
-  // Handler to toggle attendance
-  const handleToggleAttendance = (eventId) => {
-    dispatch(toggleEventAttendance(eventId));
-  };
+  if (isLoading) {
+    return <p>Loading events...</p>;
+  }
+
+  if (error) {
+    return <p className="error-message">{error}</p>;
+  }
 
   return (
     <div className="event-container">
@@ -63,13 +96,12 @@ const EventList = () => {
         </Link>
       )}
 
-      {/* Advanced Filter Bar */}
       <div className="filter-bar">
         <label htmlFor="category-filter">Filter by Category:</label>
         <select
           id="category-filter"
           value={selectedCategory}
-          onChange={handleCategoryChange}
+          onChange={(e) => setSelectedCategory(e.target.value)}
         >
           {categories.map((category) => (
             <option key={category} value={category}>
@@ -79,150 +111,95 @@ const EventList = () => {
         </select>
       </div>
 
-      {/* Overdue Events Section */}
-      {overdueEvents.length > 0 && (
-        <div className="event-list overdue-events">
-          <h3>Overdue Events</h3>
-          {overdueEvents.map((event) => (
-            <div key={event.id} className="event-card overdue">
-              <h3>{event.name}</h3>
-              <p>{event.description}</p>
-              <p>
-                <strong>Category:</strong> {event.category}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(event.happening_date).toLocaleString()}
-              </p>
-              <button
-                onClick={() => handleToggleAttendance(event.id)}
-                className="btn-secondary"
-              >
-                Mark as Attended
-              </button>
-              <Link to={`/events/${event.id}`} className="btn-secondary">
-                View Details
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="event-lists">
+        {/* Overdue Events */}
+        {overdueEvents.length > 0 && (
+          <div className="event-list overdue-events">
+            <h3>Overdue Events</h3>
+            {overdueEvents.map((event) => (
+              <div key={event.event_id} className="event-card overdue">
+                <h3>{event.event_name}</h3>
+                <p>{event.event_description}</p>
+                <p>
+                  <strong>Category:</strong> {event.event_category}
+                </p>
+                <p>
+                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                </p>
+                <button
+                  onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                  className="btn-secondary"
+                >
+                  Mark as Attended
+                </button>
+                <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                  View Details
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Upcoming Events Section */}
-      <div className="event-list upcoming-events">
-        <h3>Upcoming Events</h3>
-        {upcomingEvents.length > 0 ? (
-          upcomingEvents.map((event) => (
-            <div key={event.id} className="event-card">
-              <h3>{event.name}</h3>
-              <p>{event.description}</p>
-              <p>
-                <strong>Category:</strong> {event.category}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(event.happening_date).toLocaleString()}
-              </p>
-              <button
-                onClick={() => handleToggleAttendance(event.id)}
-                className="btn-secondary"
-              >
-                Mark as Attended
-              </button>
-              <Link to={`/events/${event.id}`} className="btn-secondary">
-                View Details
-              </Link>
-            </div>
-          ))
-        ) : (
-          <p>No upcoming events available.</p>
+        {/* Upcoming Events */}
+        <div className="event-list upcoming-events">
+          <h3>Upcoming Events</h3>
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event) => (
+              <div key={event.event_id} className="event-card">
+                <h3>{event.event_name}</h3>
+                <p>{event.event_description}</p>
+                <p>
+                  <strong>Category:</strong> {event.event_category}
+                </p>
+                <p>
+                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                </p>
+                <button
+                  onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                  className="btn-secondary"
+                >
+                  Mark as Attended
+                </button>
+                <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                  View Details
+                </Link>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events available.</p>
+          )}
+        </div>
+
+        {/* Attended Events */}
+        {attendedEvents.length > 0 && (
+          <div className="event-list attended-events">
+            <h3>Attended Events</h3>
+            {attendedEvents.map((event) => (
+              <div key={event.event_id} className="event-card attended">
+                <h3>{event.event_name}</h3>
+                <p>{event.event_description}</p>
+                <p>
+                  <strong>Category:</strong> {event.event_category}
+                </p>
+                <p>
+                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                </p>
+                <button
+                  onClick={() => handleUpdateStatus(event.event_id, "Unattended", event.event_time)}
+                  className="btn-secondary"
+                >
+                  Mark as Unattended
+                </button>
+                <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                  View Details
+                </Link>
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
-      {/* Attended Events Section */}
-      {attendedEvents.length > 0 && (
-        <div className="event-list attended-events">
-          <h3>Attended Events</h3>
-          {attendedEvents.map((event) => (
-            <div key={event.id} className="event-card attended">
-              <h3>{event.name}</h3>
-              <p>{event.description}</p>
-              <p>
-                <strong>Category:</strong> {event.category}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(event.happening_date).toLocaleString()}
-              </p>
-              <button
-                onClick={() => handleToggleAttendance(event.id)}
-                className="btn-secondary"
-              >
-                Mark as Not Attended
-              </button>
-              <Link to={`/events/${event.id}`} className="btn-secondary">
-                View Details
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
-
-// Mock Data Setup
-const mockEvents = [
-  {
-    id: 1,
-    name: "Tech Career Fair",
-    description: "Connecting students with top tech companies.",
-    happening_date: "2024-12-15T10:00:00",
-    entry_date: "2024-11-01T00:00:00",
-    admin_username: "admin1",
-    attended: false,
-    category: "Career",
-  },
-  {
-    id: 2,
-    name: "Annual Research Showcase",
-    description: "Presenting groundbreaking research projects.",
-    happening_date: "2024-11-20T09:00:00",
-    entry_date: "2024-10-15T00:00:00",
-    admin_username: "admin2",
-    attended: true,
-    category: "Research",
-  },
-  {
-    id: 3,
-    name: "Campus Study Group",
-    description: "Group study sessions for final exams.",
-    happening_date: "2024-11-25T14:00:00",
-    entry_date: "2024-11-10T00:00:00",
-    admin_username: "admin3",
-    attended: false,
-    category: "Study",
-  },
-  {
-    id: 4,
-    name: "Music Concert",
-    description: "Enjoy live performances by local bands.",
-    happening_date: "2024-12-05T19:00:00",
-    entry_date: "2024-11-05T00:00:00",
-    admin_username: "admin4",
-    attended: false,
-    category: "Entertainment",
-  },
-  {
-    id: 5,
-    name: "Yoga Session",
-    description: "Morning yoga for relaxation and fitness.",
-    happening_date: "2024-11-18T07:00:00",
-    entry_date: "2024-11-01T00:00:00",
-    admin_username: "admin5",
-    attended: true,
-    category: "Exercise",
-  },
-];
 
 export default EventList;

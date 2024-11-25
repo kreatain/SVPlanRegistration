@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+import { loginUser } from "../../apiService"; 
 import "../../styles/Auth.css";
 
 const Login = () => {
@@ -15,43 +15,34 @@ const Login = () => {
 
   const { email, password } = formData;
 
-  const apiUrl = process.env.REACT_APP_API_URL;
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
-      // Step 1: Login request
-      const response = await axios.post(`${apiUrl}/api/signin/`, {
-        email,
-        password,
-      });
+      const response = await loginUser({ email, password }); 
+      console.log("Login response:", response);
 
-      console.log("Login response:", response.data);
-      const userData = response.data;
+      const { role, message } = response.data;
+  
+      console.log(`Login success: ${message}, Role: ${role}`);
 
-      // Step 2: Add email and password to userData for storage in Redux
-      const userWithCredentials = {
-        ...userData,
-        email,
-        password,
-      };
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
 
-      // Step 3: Dispatch to Redux
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: userWithCredentials,
+        payload: { email, role }, 
       });
 
-      // Step 4: Redirect to events page
       navigate("/events");
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      alert("Invalid credentials. Please try again.");
+      console.error("Login failed:", error);
+  
+      alert(error.response?.data?.error || "Invalid credentials. Please try again.");
     }
   };
 
