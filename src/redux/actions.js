@@ -35,6 +35,17 @@ export const setTasks = (tasks) => ({
   payload: tasks,
 });
 
+
+
+export const setEvents = (events) => {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_EVENTS",
+      payload: events,
+    });
+  };
+};
+
 // New Event Action Creators
 export const toggleEventAttendance = (eventId) => ({
   type: TOGGLE_EVENT_ATTENDANCE,

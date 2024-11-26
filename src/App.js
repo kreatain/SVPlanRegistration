@@ -106,6 +106,7 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
+        <Route path="/events/:id" element={<EventDetail />} />
 
         {/* Default Route */}
         <Route path="*" element={<Navigate to="/login" />} />

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { setEvents as setReduxEvents } from "../../redux/actions";
 import { listEvents, updateEventStatus } from "../../apiService"; 
 import "../../styles/EventList.css";
 
 const EventList = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const [events, setEvents] = useState([]);
@@ -20,11 +23,11 @@ const EventList = () => {
     "Opportunity",
   ];
 
-  // State for selected category filter
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = ["All", ...EVENT_CATEGORIES];
-  
+
+
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -34,7 +37,8 @@ const EventList = () => {
       try {
         const response = await listEvents();
         console.log("Fetched events:", response.data.events);
-        setEvents(response.data.events); 
+        setEvents(response.data.events);
+        dispatch(setReduxEvents(response.data.events));
       } catch (error) {
         console.error("Failed to fetch events:", error.response?.data || error.message);
         setError("Failed to fetch events. Please try again later.");
@@ -46,39 +50,43 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
-const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
-  try {
-    if (newStatus === "Unattended") {
-      const currentDateTime = new Date();
-      newStatus = new Date(eventTime) < currentDateTime ? "Overdue" : "Upcoming";
+  const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
+    try {
+      if (newStatus === "Unattended") {
+        const currentDateTime = new Date();
+        newStatus = new Date(eventTime) < currentDateTime ? "Overdue" : "Upcoming";
+      }
+
+      const response = await updateEventStatus(eventId, { status: newStatus });
+      console.log(`Event ${eventId} status updated to ${newStatus}:`, response.data);
+
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.event_id === eventId ? { ...event, event_status: newStatus } : event
+        )
+      );
+
+      alert(`Event status updated to ${newStatus}`);
+    } catch (error) {
+      console.error(`Failed to update status for event ${eventId}:`, error.response?.data || error.message);
+      alert("Failed to update event status. Please try again.");
     }
-
-    const response = await updateEventStatus(eventId, { status: newStatus });
-    console.log(`Event ${eventId} status updated to ${newStatus}:`, response.data);
-
-    setEvents((prevEvents) =>
-      prevEvents.map((event) =>
-        event.event_id === eventId ? { ...event, event_status: newStatus } : event
-      )
-    );
-
-    alert(`Event status updated to ${newStatus}`);
-  } catch (error) {
-    console.error(`Failed to update status for event ${eventId}:`, error.response?.data || error.message);
-    alert("Failed to update event status. Please try again.");
-  }
-};
+  };
 
   const filteredEvents =
     selectedCategory === "All"
       ? events
       : events.filter((event) => event.event_category === selectedCategory);
 
-  const currentDate = new Date();
-
-  const attendedEvents = filteredEvents.filter((event) => event.event_status === "Attended");
-  const upcomingEvents = filteredEvents.filter((event) => event.event_status === "Upcoming");
-  const overdueEvents = filteredEvents.filter((event) => event.event_status === "Overdue");
+  const attendedEvents = filteredEvents.filter(
+    (event) => event.event_status === "Attended"
+  );
+  const upcomingEvents = filteredEvents.filter(
+    (event) => event.event_status === "Upcoming"
+  );
+  const overdueEvents = filteredEvents.filter(
+    (event) => event.event_status === "Overdue"
+  );
 
   if (isLoading) {
     return <p>Loading events...</p>;
@@ -96,7 +104,7 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
           Create New Event
         </Link>
       )}
-  
+
       <div className="filter-bar">
         <label htmlFor="category-filter">Filter by Category:</label>
         <select
@@ -111,7 +119,7 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
           ))}
         </select>
       </div>
-  
+
       <div className="event-lists">
         {/* Upcoming Events */}
         <div className="event-section">
@@ -128,12 +136,17 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
                   <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
                 </p>
                 <div className="btn-container">
-                  <button
-                    onClick={() => handleUpdateStatus(event.event_id, "Attended")}
-                    className="btn-secondary"
-                  >
-                    Mark as Attended
-                  </button>
+                  {user.role !== "Admin" && (
+                    <>
+                      <button
+                        onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                        className="btn-secondary"
+                      >
+                        Mark as Attended
+                      </button>
+                    
+                    </>
+                  )}
                   <Link to={`/events/${event.event_id}`} className="btn-secondary">
                     View Details
                   </Link>
@@ -144,7 +157,7 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
             <p>No upcoming events available.</p>
           )}
         </div>
-  
+
         {/* Attended Events */}
         <div className="event-section">
           <h3 className="event-title attended-title">Attended Events</h3>
@@ -160,14 +173,18 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
                   <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
                 </p>
                 <div className="btn-container">
-                  <button
-                    onClick={() =>
-                      handleUpdateStatus(event.event_id, "Unattended", event.event_time)
-                    }
-                    className="btn-secondary"
-                  >
-                    Mark as Unattended
-                  </button>
+                  {user.role !== "Admin" && (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleUpdateStatus(event.event_id, "Unattended", event.event_time)
+                        }
+                        className="btn-secondary"
+                      >
+                        Mark as Unattended
+                      </button>
+                    </>
+                  )}
                   <Link to={`/events/${event.event_id}`} className="btn-secondary">
                     View Details
                   </Link>
@@ -178,7 +195,7 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
             <p>No attended events available.</p>
           )}
         </div>
-  
+
         {/* Overdue Events */}
         <div className="event-section">
           <h3 className="event-title overdue-title">Overdue Events</h3>
@@ -194,12 +211,16 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
                   <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
                 </p>
                 <div className="btn-container">
-                  <button
-                    onClick={() => handleUpdateStatus(event.event_id, "Attended")}
-                    className="btn-secondary"
-                  >
-                    Mark as Attended
-                  </button>
+                  {user.role !== "Admin" && (
+                    <>
+                      <button
+                        onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                        className="btn-secondary"
+                      >
+                        Mark as Attended
+                      </button>
+                    </>
+                  )}
                   <Link to={`/events/${event.event_id}`} className="btn-secondary">
                     View Details
                   </Link>
