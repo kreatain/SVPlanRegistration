@@ -11,24 +11,22 @@ const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSend = (action) => {
-    if (input.trim() === "") return;
+    if (input.trim() === "") return; 
 
-    // Add user message
     setMessages((prevMessages) => [
       ...prevMessages,
       { sender: "user", text: input },
     ]);
 
-    // Determine the API to call based on the action
     const apiCall = action === "generate" ? generateSQL : executeSQL;
-
-    // Call the API
-    apiCall({ user_input: input })
-      .then((response) => {
+    const payload = action === "generate" ? input : input; 
+ 
+    apiCall(payload)
+      .then((response) => {   
         const botResponse =
           action === "generate"
-            ? response.data.sql_query // For generateSQL, use the SQL query
-            : JSON.stringify(response.data.result, null, 2); // For executeSQL, display the result
+            ? response.data.sql_query 
+            : JSON.stringify(response.data.result, null, 2); 
 
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -51,12 +49,12 @@ const ChatBot = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSend("generate");
+      handleSend("generate"); 
     }
   };
 
   const toggleChatBot = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(!isOpen); 
   };
 
   return (
