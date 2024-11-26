@@ -7,6 +7,8 @@
   --secondary-text: #555555; /* Medium Gray Text */
   --border-color: #dddddd; /* Light Gray Border */
   --shadow-color: rgba(0, 0, 0, 0.1); /* Subtle Shadow */
+  --success-color: #d4edda; /* Green */
+  --error-color: #f8d7da; /* Red */
 
   /* Spacing */
   --spacing-small: 8px;

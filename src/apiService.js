@@ -21,9 +21,21 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
   );
 
-export const uploadFile = async (studentEmail, fileContent) => {
-  return axiosInstance.post(`/upload/${studentEmail}`, { file: fileContent,});
-};
+  export const uploadFile = async (studentEmail, file) => {
+    if (!studentEmail) {
+      throw new Error("Student email is required to upload the file");
+    }
+ 
+    const formData = new FormData();
+    formData.append("file", file); 
+  
+    return axiosInstance.post(`/upload/${studentEmail}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", 
+      },
+    });
+  };
+
 
 export const getTaskDetail = async (studentEmail, taskId) => {
   return axiosInstance.get(`/task/${studentEmail}/${taskId}`);
@@ -80,5 +92,40 @@ export const listEvents = async (sortParam) => {
 export const filterEventsByCategory = async (category) => {
   return axiosInstance.get(`/api/filter-events/`, {
     params: { category },
+  });
+};
+
+
+/**
+ * Generate SQL query from natural language input
+ * @param {string} userInput - The natural language query.
+ * @returns {Promise} - Axios response with generated SQL query.
+ */
+export const generateSQL = async (userInput) => {
+  if (!userInput) {
+    throw new Error("'user_input' is required.");
+  }
+
+  return axiosInstance.post(`/api/generate-sql/`, { user_input: userInput }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+/**
+ * Execute SQL query on the connected database
+ * @param {string} sqlQuery - The SQL query to execute.
+ * @returns {Promise} - Axios response with query execution result.
+ */
+export const executeSQL = async (sqlQuery) => {
+  if (!sqlQuery) {
+    throw new Error("'sql_query' is required.");
+  }
+
+  return axiosInstance.post(`/api/execute-sql/`, { sql_query: sqlQuery }, {
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };

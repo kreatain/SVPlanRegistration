@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Draggable from "react-draggable";
+import { generateSQL, executeSQL } from "../apiService";
 import "../styles/ChatBot.css";
 
 const ChatBot = () => {
@@ -8,42 +10,48 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = (action) => {
     if (input.trim() === "") return;
 
     // Add user message
-    setMessages([...messages, { sender: "user", text: input }]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "user", text: input },
+    ]);
 
-    // Mock bot response
-    setTimeout(() => {
-      const botResponse = getBotResponse(input);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "bot", text: botResponse },
-      ]);
-    }, 1000);
+    // Determine the API to call based on the action
+    const apiCall = action === "generate" ? generateSQL : executeSQL;
+
+    // Call the API
+    apiCall({ user_input: input })
+      .then((response) => {
+        const botResponse =
+          action === "generate"
+            ? response.data.sql_query // For generateSQL, use the SQL query
+            : JSON.stringify(response.data.result, null, 2); // For executeSQL, display the result
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "bot", text: botResponse },
+        ]);
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+        const errorMessage =
+          error.response?.data?.error ||
+          "Sorry, something went wrong. Please try again.";
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: "bot", text: errorMessage },
+        ]);
+      });
 
     setInput("");
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSend();
-    }
-  };
-
-  // Mock bot response
-  const getBotResponse = (userInput) => {
-    // Hard-coded responses
-    const input = userInput.toLowerCase();
-    if (input.includes("hello") || input.includes("hi")) {
-      return "Hi there! How can I help you with your registration?";
-    } else if (input.includes("event")) {
-      return "You can view all upcoming events on the Events page.";
-    } else if (input.includes("task")) {
-      return "To manage your tasks, navigate to the Tasks section.";
-    } else {
-      return "I'm sorry, I didn't understand that. Could you please rephrase?";
+      handleSend("generate");
     }
   };
 
@@ -54,36 +62,39 @@ const ChatBot = () => {
   return (
     <>
       {isOpen && (
-        <div className="chatbot-container">
-          <div className="chatbot-header">
-            <h4>ChatBot</h4>
-            <button className="close-button" onClick={toggleChatBot}>
-              &times;
-            </button>
+        <Draggable handle=".chatbot-header">
+          <div className="chatbot-container">
+            <div className="chatbot-header">
+              <h4>ChatBot</h4>
+              <button className="close-button" onClick={toggleChatBot}>
+                &times;
+              </button>
+            </div>
+            <div className="chatbot-messages">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`chatbot-message ${
+                    msg.sender === "bot" ? "bot" : "user"
+                  }`}
+                >
+                  <span>{msg.text}</span>
+                </div>
+              ))}
+            </div>
+            <div className="chatbot-input">
+              <input
+                type="text"
+                placeholder="Type your message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <button onClick={() => handleSend("generate")}>Generate</button>
+              <button onClick={() => handleSend("execute")}>Execute</button>
+            </div>
           </div>
-          <div className="chatbot-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`chatbot-message ${
-                  msg.sender === "bot" ? "bot" : "user"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
-          </div>
-          <div className="chatbot-input">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <button onClick={handleSend}>Send</button>
-          </div>
-        </div>
+        </Draggable>
       )}
       <button className="chatbot-toggle-button" onClick={toggleChatBot}>
         {isOpen ? "Close Chat" : "Open Chat"}

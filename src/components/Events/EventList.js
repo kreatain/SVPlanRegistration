@@ -12,11 +12,12 @@ const EventList = () => {
   const [error, setError] = useState(null);
 
   const EVENT_CATEGORIES = [
-    "Career",
-    "Study",
-    "Research",
-    "Entertainment",
-    "Exercise",
+    "Workshop",
+    "Career Fair",
+    "Conference",
+    "Culture Festival",
+    "Volunteer",
+    "Opportunity",
   ];
 
   // State for selected category filter
@@ -95,7 +96,7 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
           Create New Event
         </Link>
       )}
-
+  
       <div className="filter-bar">
         <label htmlFor="category-filter">Filter by Category:</label>
         <select
@@ -110,39 +111,11 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
           ))}
         </select>
       </div>
-
+  
       <div className="event-lists">
-        {/* Overdue Events */}
-        {overdueEvents.length > 0 && (
-          <div className="event-list overdue-events">
-            <h3>Overdue Events</h3>
-            {overdueEvents.map((event) => (
-              <div key={event.event_id} className="event-card overdue">
-                <h3>{event.event_name}</h3>
-                <p>{event.event_description}</p>
-                <p>
-                  <strong>Category:</strong> {event.event_category}
-                </p>
-                <p>
-                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
-                </p>
-                <button
-                  onClick={() => handleUpdateStatus(event.event_id, "Attended")}
-                  className="btn-secondary"
-                >
-                  Mark as Attended
-                </button>
-                <Link to={`/events/${event.event_id}`} className="btn-secondary">
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Upcoming Events */}
-        <div className="event-list upcoming-events">
-          <h3>Upcoming Events</h3>
+        <div className="event-section">
+          <h3 className="event-title upcoming-title">Upcoming Events</h3>
           {upcomingEvents.length > 0 ? (
             upcomingEvents.map((event) => (
               <div key={event.event_id} className="event-card">
@@ -154,27 +127,29 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
                 <p>
                   <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
                 </p>
-                <button
-                  onClick={() => handleUpdateStatus(event.event_id, "Attended")}
-                  className="btn-secondary"
-                >
-                  Mark as Attended
-                </button>
-                <Link to={`/events/${event.event_id}`} className="btn-secondary">
-                  View Details
-                </Link>
+                <div className="btn-container">
+                  <button
+                    onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                    className="btn-secondary"
+                  >
+                    Mark as Attended
+                  </button>
+                  <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                    View Details
+                  </Link>
+                </div>
               </div>
             ))
           ) : (
             <p>No upcoming events available.</p>
           )}
         </div>
-
+  
         {/* Attended Events */}
-        {attendedEvents.length > 0 && (
-          <div className="event-list attended-events">
-            <h3>Attended Events</h3>
-            {attendedEvents.map((event) => (
+        <div className="event-section">
+          <h3 className="event-title attended-title">Attended Events</h3>
+          {attendedEvents.length > 0 ? (
+            attendedEvents.map((event) => (
               <div key={event.event_id} className="event-card attended">
                 <h3>{event.event_name}</h3>
                 <p>{event.event_description}</p>
@@ -184,19 +159,57 @@ const handleUpdateStatus = async (eventId, newStatus, eventTime) => {
                 <p>
                   <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
                 </p>
-                <button
-                  onClick={() => handleUpdateStatus(event.event_id, "Unattended", event.event_time)}
-                  className="btn-secondary"
-                >
-                  Mark as Unattended
-                </button>
-                <Link to={`/events/${event.event_id}`} className="btn-secondary">
-                  View Details
-                </Link>
+                <div className="btn-container">
+                  <button
+                    onClick={() =>
+                      handleUpdateStatus(event.event_id, "Unattended", event.event_time)
+                    }
+                    className="btn-secondary"
+                  >
+                    Mark as Unattended
+                  </button>
+                  <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                    View Details
+                  </Link>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <p>No attended events available.</p>
+          )}
+        </div>
+  
+        {/* Overdue Events */}
+        <div className="event-section">
+          <h3 className="event-title overdue-title">Overdue Events</h3>
+          {overdueEvents.length > 0 ? (
+            overdueEvents.map((event) => (
+              <div key={event.event_id} className="event-card overdue">
+                <h3>{event.event_name}</h3>
+                <p>{event.event_description}</p>
+                <p>
+                  <strong>Category:</strong> {event.event_category}
+                </p>
+                <p>
+                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                </p>
+                <div className="btn-container">
+                  <button
+                    onClick={() => handleUpdateStatus(event.event_id, "Attended")}
+                    className="btn-secondary"
+                  >
+                    Mark as Attended
+                  </button>
+                  <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No overdue events available.</p>
+          )}
+        </div>
       </div>
     </div>
   );

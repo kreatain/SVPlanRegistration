@@ -109,7 +109,7 @@
 
 /* Added Styles for File Link */
 .task-card a {
-  color: var(--primary-color);
+  color: blue;
   text-decoration: none;
   font-weight: 300;
   transition: color var(--transition-speed) ease;
@@ -120,7 +120,36 @@
   text-decoration: underline;
 }
 
+
+.task-card.overdue h3,
+.task-card.overdue p.status {
+  color: red; 
+}
+
 .task-card.overdue {
-  border-left: 5px solid red;
-  background-color: #ffe6e6;
+  border: 1px solid red; 
+}
+
+.filter-bar {
+  display: flex;
+  gap: 20px; 
+  flex-wrap: wrap; 
+  justify-content: space-between; 
+  margin-bottom: 20px; 
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-start; 
+}
+
+.filter-item label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px; 
+}
+.filter-item select {
+  padding: 5px;
+  font-size: 14px;
 }

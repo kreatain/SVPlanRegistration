@@ -2,8 +2,8 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 300px;
-  max-height: 400px;
+  width: 600px; /* Increased width */
+  max-height: 600px; /* Increased height */
   background-color: #f5f5f5;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -17,7 +17,8 @@
 .chatbot-header {
   background-color: #007bff;
   color: white;
-  padding: 10px;
+  padding: 15px; /* Increased padding */
+  font-size: 18px; /* Larger font size */
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   text-align: center;
@@ -25,16 +26,17 @@
 
 .chatbot-messages {
   flex: 1;
-  padding: 10px;
+  padding: 15px; /* Increased padding */
   overflow-y: auto;
   background-color: #ffffff;
+  font-size: 16px; /* Larger font size */
 }
 
 .chatbot-message {
-  margin-bottom: 10px;
-  padding: 8px 12px;
+  margin-bottom: 12px; /* Increased spacing between messages */
+  padding: 10px 15px; /* Increased padding for messages */
   border-radius: 15px;
-  max-width: 80%;
+  max-width: 90%; /* Increased max-width */
   word-wrap: break-word;
 }
 
@@ -51,7 +53,7 @@
 .chatbot-input {
   display: flex;
   border-top: 1px solid #ccc;
-  padding: 10px;
+  padding: 15px; /* Increased padding */
   background-color: #f5f5f5;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -59,7 +61,8 @@
 
 .chatbot-input input {
   flex: 1;
-  padding: 8px;
+  padding: 12px; /* Increased padding */
+  font-size: 16px; /* Larger font size */
   border: 1px solid #ccc;
   border-radius: 4px;
   outline: none;
@@ -67,7 +70,8 @@
 
 .chatbot-input button {
   margin-left: 10px;
-  padding: 8px 16px;
+  padding: 12px 20px; /* Increased button size */
+  font-size: 16px; /* Larger font size */
   background-color: #007bff;
   color: white;
   border: none;
@@ -85,7 +89,8 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  padding: 10px 15px;
+  padding: 15px 20px; /* Increased size */
+  font-size: 16px; /* Larger font size */
   background-color: #007bff;
   color: white;
   border: none;
@@ -105,9 +110,9 @@
   background: none;
   border: none;
   color: white;
-  font-size: 20px;
+  font-size: 24px; /* Larger font size */
   cursor: pointer;
   position: absolute;
-  top: 5px;
-  right: 10px;
+  top: 10px;
+  right: 15px;
 }

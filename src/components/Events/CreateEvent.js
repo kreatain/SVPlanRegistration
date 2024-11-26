@@ -11,11 +11,12 @@ const CreateEvent = () => {
   const { user } = useSelector((state) => state.auth);
 
   const EVENT_CATEGORIES = [
-    "Career",
-    "Study",
-    "Research",
-    "Entertainment",
-    "Exercise",
+    "Workshop",
+    "Career Fair",
+    "Conference",
+    "Culture Festival",
+    "Volunteer",
+    "Opportunity",
   ];
 
   const [formData, setFormData] = useState({
