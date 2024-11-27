@@ -1,37 +1,28 @@
 const initialState = {
-  isAuthenticated: false,
-  loading: false,
-  user: null,
-  users: [
-    { id: 1, email: "admin@example.com", role: "Admin" },
-    {
-      id: 2,
-      email: "student1@example.com",
-      role: "Student",
-    },
-    {
-      id: 3,
-      email: "student2@example.com",
-      role: "Student",
-    },
-  ],
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  isAuthenticated: !!localStorage.getItem("user"),
 };
 
-export default function authReducer(state = initialState, action) {
+const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case "LOGIN_SUCCESS":
+      localStorage.setItem("user", JSON.stringify(action.payload));
       return {
         ...state,
-        isAuthenticated: true,
         user: action.payload,
+        isAuthenticated: true,
       };
     case "LOGOUT":
+      localStorage.removeItem("user");
       return {
         ...state,
-        isAuthenticated: false,
         user: null,
+        isAuthenticated: false,
+        tasks: [], events: [],
       };
     default:
       return state;
   }
-}
+};
+
+export default authReducer;

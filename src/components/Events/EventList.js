@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { setEvents as setReduxEvents } from "../../redux/actions";
-import { listEvents, updateEventStatus } from "../../apiService"; 
+import { listEvents, updateEventStatus } from "../../apiService";
+import dayjs from "dayjs"; // Import day.js for date formatting
 import "../../styles/EventList.css";
 
 const EventList = () => {
@@ -27,8 +28,6 @@ const EventList = () => {
 
   const categories = ["All", ...EVENT_CATEGORIES];
 
-
-
   useEffect(() => {
     const fetchEvents = async () => {
       setIsLoading(true);
@@ -40,7 +39,10 @@ const EventList = () => {
         setEvents(response.data.events);
         dispatch(setReduxEvents(response.data.events));
       } catch (error) {
-        console.error("Failed to fetch events:", error.response?.data || error.message);
+        console.error(
+          "Failed to fetch events:",
+          error.response?.data || error.message
+        );
         setError("Failed to fetch events. Please try again later.");
       } finally {
         setIsLoading(false);
@@ -68,7 +70,10 @@ const EventList = () => {
 
       alert(`Event status updated to ${newStatus}`);
     } catch (error) {
-      console.error(`Failed to update status for event ${eventId}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to update status for event ${eventId}:`,
+        error.response?.data || error.message
+      );
       alert("Failed to update event status. Please try again.");
     }
   };
@@ -128,12 +133,12 @@ const EventList = () => {
             upcomingEvents.map((event) => (
               <div key={event.event_id} className="event-card">
                 <h3>{event.event_name}</h3>
-                <p>{event.event_description}</p>
+                <p><strong>Description:</strong> {event.event_description}</p>
                 <p>
                   <strong>Category:</strong> {event.event_category}
                 </p>
                 <p>
-                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                  <strong>Date:</strong> {dayjs(event.event_time).format("YYYY-MM-DD HH:mm:ss")}
                 </p>
                 <div className="btn-container">
                   {user.role !== "Admin" && (
@@ -144,7 +149,6 @@ const EventList = () => {
                       >
                         Mark as Attended
                       </button>
-                    
                     </>
                   )}
                   <Link to={`/events/${event.event_id}`} className="btn-secondary">
@@ -159,42 +163,40 @@ const EventList = () => {
         </div>
 
         {/* Attended Events */}
-        <div className="event-section">
-          <h3 className="event-title attended-title">Attended Events</h3>
-          {attendedEvents.length > 0 ? (
-            attendedEvents.map((event) => (
-              <div key={event.event_id} className="event-card attended">
-                <h3>{event.event_name}</h3>
-                <p>{event.event_description}</p>
-                <p>
-                  <strong>Category:</strong> {event.event_category}
-                </p>
-                <p>
-                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
-                </p>
-                <div className="btn-container">
-                  {user.role !== "Admin" && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleUpdateStatus(event.event_id, "Unattended", event.event_time)
-                        }
-                        className="btn-secondary"
-                      >
-                        Mark as Unattended
-                      </button>
-                    </>
-                  )}
-                  <Link to={`/events/${event.event_id}`} className="btn-secondary">
-                    View Details
-                  </Link>
+        {user.role !== "Admin" && (
+          <div className="event-section">
+            <h3 className="event-title attended-title">Attended Events</h3>
+            {attendedEvents.length > 0 ? (
+              attendedEvents.map((event) => (
+                <div key={event.event_id} className="event-card attended">
+                  <h3>{event.event_name}</h3>
+                  <p><strong>Description:</strong> {event.event_description}</p>
+                  <p>
+                    <strong>Category:</strong> {event.event_category}
+                  </p>
+                  <p>
+                    <strong>Date:</strong> {dayjs(event.event_time).format("YYYY-MM-DD HH:mm:ss")}
+                  </p>
+                  <div className="btn-container">
+                    <button
+                      onClick={() =>
+                        handleUpdateStatus(event.event_id, "Unattended", event.event_time)
+                      }
+                      className="btn-secondary"
+                    >
+                      Mark as Unattended
+                    </button>
+                    <Link to={`/events/${event.event_id}`} className="btn-secondary">
+                      View Details
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>No attended events available.</p>
-          )}
-        </div>
+              ))
+            ) : (
+              <p>No attended events available.</p>
+            )}
+          </div>
+        )}
 
         {/* Overdue Events */}
         <div className="event-section">
@@ -203,12 +205,12 @@ const EventList = () => {
             overdueEvents.map((event) => (
               <div key={event.event_id} className="event-card overdue">
                 <h3>{event.event_name}</h3>
-                <p>{event.event_description}</p>
+                <p><strong>Description:</strong> {event.event_description}</p>
                 <p>
                   <strong>Category:</strong> {event.event_category}
                 </p>
                 <p>
-                  <strong>Date:</strong> {new Date(event.event_time).toLocaleString()}
+                  <strong>Date:</strong> {dayjs(event.event_time).format("YYYY-MM-DD HH:mm:ss")}
                 </p>
                 <div className="btn-container">
                   {user.role !== "Admin" && (

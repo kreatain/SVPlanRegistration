@@ -6,8 +6,9 @@ import "../../styles/EventDetail.css";
 const EventDetail = () => {
   const { id } = useParams();
   const { events } = useSelector((state) => state.event);
+
   console.log("Route Param ID:", id);
-console.log("Event Detail - Events:", events);  
+  console.log("Event Detail - Events:", events);
 
   // Find the event by ID
   const event = events.find((evt) => evt.event_id === parseInt(id));
@@ -34,6 +35,9 @@ console.log("Event Detail - Events:", events);
           <strong>Category:</strong> {event.event_category}
         </p>
         <p><strong>Description:</strong> {event.event_description}</p>
+        <p>
+          <strong>Location:</strong> {event.event_location || "Not provided"}
+        </p>
         <p>
           <strong>Happening Date:</strong>{" "}
           {new Date(event.event_time).toLocaleString()}

@@ -1,259 +1,188 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import "../../styles/TaskList.css";
-import { getAllTasks } from "../../apiService";
-import { updateTask } from "../../apiService";
-import { setTasks } from "../../redux/actions";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import "../../styles/AddTask.css";
+import { uploadFile, updateTask } from "../../apiService";
 
-const TaskList = () => {
-  const dispatch = useDispatch();
-  const { tasks } = useSelector((state) => state.task);
+const AddTask = () => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
   const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const categories = ["All", ...TASK_CATEGORIES];
-  const currentDate = new Date();
 
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    taskId: null, // Ensure taskId is included in formData
+    taskName: "",
+    description: "",
+    dueDate: "",
+    taskStatus: "In process",
+    taskCategory: TASK_CATEGORIES[0],
+    file: null,
+  });
 
-  const checkAndUpdateOverdueTasks = async (taskList) => {
-    const overdueUpdates = taskList
-      .filter(
-        (task) =>
-          task.taskStatus !== "Completed" &&
-          task.dueDate &&
-          new Date(task.dueDate) < currentDate
-      )
-      .map(async (task) => {
-        const updatedTaskData = {
-          ...task,
-          taskStatus: "Overdue",
-        };
-        try {
-          const response = await updateTask(user.email, task.taskId, updatedTaskData);
-          if (response && response.data) {
-           
-            dispatch({
-              type: "UPDATE_TASK",
-              payload: response.data, 
-            });
-          }
-        } catch (error) {
-          console.error(`Failed to update task ${task.taskId} to Overdue`, error);
-        }
-      });
-  
-    await Promise.all(overdueUpdates);
-  
+  const { taskId, taskName, description, dueDate, taskStatus, taskCategory, file } =
+    formData;
 
-    const refreshedTasks = await getAllTasks(user.email);
-    if (refreshedTasks && refreshedTasks.data) {
-      dispatch(setTasks(refreshedTasks.data.tasks)); 
-    }
-  };
+  const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (!user?.email) return;
+  const handleChange = async (e) => {
+    const { name, files } = e.target;
 
-      setLoading(true);
+    if (name === "file" && files && files[0]) {
+      const file = files[0];
+      setUploading(true);
+
       try {
-        const response = await getAllTasks(user.email);
+        if (!user.email) {
+          alert("User email is not available. Please log in again.");
+          return;
+        }
+
+        const response = await uploadFile(user.email, file);
+
         if (response && response.data) {
-          const fetchedTasks = response.data.tasks;
-          dispatch(setTasks(fetchedTasks));
-          await checkAndUpdateOverdueTasks(fetchedTasks); 
+          const { task, file: uploadedFile } = response.data;
+
+          setFormData((prevData) => ({
+            ...prevData,
+            taskId: task.taskId, // Save taskId from the response
+            taskName: task.taskName || prevData.taskName,
+            description: task.description || prevData.description,
+            dueDate: task.dueDate || prevData.dueDate,
+            file: uploadedFile.filePath,
+          }));
         }
       } catch (error) {
-        console.error("Error fetching tasks:", error);
-        alert("Failed to fetch tasks. Please try again.");
+        console.error("Error uploading file:", error);
+        alert("File upload failed. Please try again.");
       } finally {
-        setLoading(false);
+        setUploading(false);
       }
-    };
-
-    fetchTasks();
-  }, [user.email, dispatch]);
-
-  const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
-
-  const handleToggleCompletion = async (task) => {
-    const dueDate = new Date(task.dueDate);
-    const isOverdue = dueDate < currentDate;
-
-    const updatedTaskData = {
-      taskName: task.taskName,
-      description: task.description,
-      dueDate: task.dueDate,
-      taskStatus:
-        task.taskStatus === "Completed"
-          ? isOverdue
-            ? "Overdue"
-            : "In process"
-          : "Completed",
-      taskCategory: task.taskCategory,
-    };
-
-    try {
-      const response = await updateTask(user.email, task.taskId, updatedTaskData);
-      if (response && response.data) {
-        const updatedTask = response.data;
-        dispatch({
-          type: "UPDATE_TASK",
-          payload: updatedTask,
-        });
-        alert("Task status updated successfully!");
-      }
-    } catch (error) {
-      console.error("Error updating task:", error);
-      alert("Failed to update task status. Please try again.");
+    } else {
+      setFormData({ ...formData, [name]: e.target.value });
     }
   };
 
-  const filteredTasks = Array.isArray(tasks)
-    ? selectedCategory === "All"
-      ? tasks
-      : tasks.filter((task) => task.taskCategory === selectedCategory)
-    : [];
-
-  const completedTasks = filteredTasks.filter(
-    (task) => task.taskStatus === "Completed"
-  );
-  const pendingTasks = filteredTasks.filter(
-    (task) => task.taskStatus !== "Completed"
-  );
-
-  const isValidDate = (dateString) => {
-    const date = new Date(dateString);
-    return !isNaN(date.getTime());
+  const handleAddOrUpdateTask = async (e) => {
+    e.preventDefault();
+  
+    if (!taskName || !description || !dueDate || !taskCategory) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+  
+    // Determine the status based on the due date
+    const currentDate = new Date();
+    const taskDueDate = new Date(dueDate);
+    const updatedStatus = taskDueDate < currentDate ? "Overdue" : "In process";
+  
+    const taskData = {
+      taskName,
+      description,
+      dueDate,
+      taskStatus: updatedStatus, // Update the status dynamically
+      taskCategory,
+    };
+  
+    try {
+      if (taskId) {
+        // Update existing task
+        const response = await updateTask(user.email, taskId, taskData);
+        if (response && response.data) {
+          alert("Task updated successfully!");
+        }
+      } else {
+        // Adding a new task is not supported in this flow
+        alert("Adding a new task is not implemented in this flow.");
+      }
+      navigate("/tasks");
+    } catch (error) {
+      console.error("Error handling task:", error);
+      alert("Failed to process the task. Please try again.");
+    }
   };
   
-  const isOverdue = (task) =>
-    task.dueDate && new Date(task.dueDate) < currentDate;
-  
-  return (
-    <div className="task-container">
-      <h2>Your Tasks</h2>
-      <Link to="/tasks/add" className="btn-primary">
-        Add New Task
-      </Link>
-      <div className="filter-bar">
-        <label htmlFor="category-filter">Filter by Category:</label>
-        <select
-          id="category-filter"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-      </div>
-      {loading ? (
-        <p>Loading tasks...</p>
-      ) : (
-        <div className="task-list">
-          {/* Pending Tasks */}
-          <h3>Pending Tasks</h3>
-          {pendingTasks.length > 0 ? (
-            pendingTasks.map((task) => (
-              <div
-                key={task.taskId}
-                className={`task-card ${isOverdue(task) ? "overdue" : ""}`}
-              >
-                <input
-                  type="checkbox"
-                  className="task-checkbox"
-                  checked={task.taskStatus === "Completed"}
-                  onChange={() => handleToggleCompletion(task)}
-                  aria-label={`Mark task "${task.taskName}" as completed`}
-                />
-                <h3>{task.taskName}</h3>
-                <p>
-                  <strong>Description:</strong> {task.description}
-                </p>
-                <p>
-                  <strong>Due Date:</strong>{" "}
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleString()
-                    : "No Due Date"}
-                </p>
-                <p className="status">
-                  <strong>Status:</strong> {task.taskStatus}
-                </p>
-                <p>
-                  <strong>Category:</strong> {task.taskCategory}
-                </p>
-                {task.file && (
-                  <p>
-                    <strong>File:</strong>{" "}
-                    <a
-                      href={task.file.filePath}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download File
-                    </a>
-                  </p>
-                )}
-              </div>
-            ))
-          ) : (
-            <p>No pending tasks available.</p>
-          )}
 
-          {/* Completed Tasks */}
-          <h3>Completed Tasks</h3>
-          {completedTasks.length > 0 ? (
-            completedTasks.map((task) => (
-              <div key={task.taskId} className="task-card">
-                <input
-                  type="checkbox"
-                  className="task-checkbox"
-                  checked={task.taskStatus === "Completed"}
-                  onChange={() => handleToggleCompletion(task)}
-                  aria-label={`Mark task "${task.taskName}" as uncompleted`}
-                />
-                <h3>{task.taskName}</h3>
-                <p>
-                  <strong>Description:</strong> {task.description}
-                </p>
-                <p>
-                  <strong>Due Date:</strong>{" "}
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleString()
-                    : "No Due Date"}
-                </p>
-                <p>
-                  <strong>Status:</strong> {task.taskStatus}
-                </p>
-                <p>
-                  <strong>Category:</strong> {task.taskCategory}
-                </p>
-                {task.file && (
-                  <p>
-                    <strong>File:</strong>{" "}
-                    <a
-                      href={task.file.filePath}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download File
-                    </a>
-                  </p>
-                )}
-              </div>
-            ))
-          ) : (
-            <p>No completed tasks available.</p>
-          )}
+  return (
+    <div className="add-task-container">
+      <h2>{taskId ? "Update Task" : "Add New Task"}</h2>
+      <form onSubmit={handleAddOrUpdateTask} className="add-task-form">
+        <div className="form-group">
+          <label>Upload File:</label>
+          <input
+            type="file"
+            name="file"
+            accept=".pdf,.doc,.docx,.jpg,.png"
+            onChange={handleChange}
+          />
+          {uploading && <p>Uploading file... Please wait.</p>}
         </div>
-      )}
+
+        <div className="form-group">
+          <label>Task Name:</label>
+          <input
+            type="text"
+            name="taskName"
+            value={taskName}
+            onChange={(e) =>
+              setFormData({ ...formData, taskName: e.target.value })
+            }
+            placeholder="Enter task name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Task Description:</label>
+          <textarea
+            name="description"
+            value={description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            placeholder="Enter task description"
+          ></textarea>
+        </div>
+
+        <div className="form-group">
+          <label>Due Date:</label>
+          <input
+            type="date"
+            name="dueDate"
+            value={dueDate}
+            onChange={(e) =>
+              setFormData({ ...formData, dueDate: e.target.value })
+            }
+          />
+        </div>
+        
+
+        <div className="form-group">
+          <label>Select Category:</label>
+          <select
+            name="taskCategory"
+            value={taskCategory}
+            onChange={(e) =>
+              setFormData({ ...formData, taskCategory: e.target.value })
+            }
+            required
+          >
+            {TASK_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button type="submit" className="btn-primary" disabled={uploading}>
+          {uploading ? "Processing..." : taskId ? "Update Task" : "Add Task"}
+        </button>
+      </form>
+      <Link to="/tasks" className="btn-secondary">
+        &larr; Back to Tasks
+      </Link>
     </div>
   );
 };
 
-export default TaskList;
+export default AddTask;

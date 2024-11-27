@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs"; // Import dayjs for formatting dates
 import "../../styles/TaskList.css";
 import { getAllTasks } from "../../apiService";
 import { updateTask } from "../../apiService";
@@ -12,8 +13,8 @@ const TaskList = () => {
   const { user } = useSelector((state) => state.auth);
   const TASK_CATEGORIES = ["Course", "DailySchedule", "Research", "Meeting"];
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [sortOrder, setSortOrder] = useState("asc"); 
-  const [statusFilter, setStatusFilter] = useState("All"); 
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [statusFilter, setStatusFilter] = useState("All");
   const categories = ["All", ...TASK_CATEGORIES];
   const currentDate = new Date();
 
@@ -87,18 +88,19 @@ const TaskList = () => {
       : tasks.filter((task) => task.taskCategory === selectedCategory)
     : [];
 
-
   const statusFilteredTasks =
     statusFilter === "All"
       ? filteredTasks
       : filteredTasks.filter((task) => task.taskStatus === statusFilter);
 
- 
   const sortedTasks = [...statusFilteredTasks].sort((a, b) => {
     const dateA = new Date(a.dueDate || "9999-12-31");
     const dateB = new Date(b.dueDate || "9999-12-31");
     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
+
+  // Helper function to format dates
+  const formatDate = (date) => dayjs(date).format("YYYY-MM-DD");
 
   return (
     <div className="task-container">
@@ -171,9 +173,7 @@ const TaskList = () => {
                 </p>
                 <p>
                   <strong>Due Date:</strong>{" "}
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleString()
-                    : "No Due Date"}
+                  {task.dueDate ? formatDate(task.dueDate) : "No Due Date"}
                 </p>
                 <p className="status">
                   <strong>Status:</strong> {task.taskStatus}
