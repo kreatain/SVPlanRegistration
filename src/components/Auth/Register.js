@@ -32,6 +32,8 @@ const Register = () => {
 
       const loginResponse = await loginUser({ email, password }); 
       console.log("Login response:", loginResponse);
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
 
       dispatch({
         type: "LOGIN_SUCCESS",
