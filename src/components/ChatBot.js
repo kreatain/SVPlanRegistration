@@ -10,8 +10,55 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  const formatResponse = (response, action) => {
+    if (action === "generate") {
+      return (
+        <pre className="formatted-sql">
+          {response.sql_query}
+        </pre>
+      );
+    } else if (action === "execute") {
+      if (response.result?.message) {
+        // Directly display the message if it exists
+        return <div className="formatted-result">{response.result.message}</div>;
+      } else if (Array.isArray(response.result) && response.result.length === 0) {
+        // Handle empty result array
+        return <div className="formatted-result">No data available.</div>;
+      }else if (Array.isArray(response.result)) {
+        // Transpose the table
+        const keys = Object.keys(response.result[0]);
+        const values = response.result.map((row) => Object.values(row));
+  
+        return (
+          <div className="formatted-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  {response.result.map((_, index) => (
+                    <th key={index}>Data {index + 1}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {keys.map((key, rowIndex) => (
+                  <tr key={rowIndex}>
+                    <td><strong>{key}</strong></td>
+                    {values.map((row, colIndex) => (
+                      <td key={colIndex}>{row[rowIndex]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+    }
+    return "Unexpected response format.";
+  };
   const handleSend = (action) => {
-    if (input.trim() === "") return; 
+    if (input.trim() === "") return;
 
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -19,18 +66,14 @@ const ChatBot = () => {
     ]);
 
     const apiCall = action === "generate" ? generateSQL : executeSQL;
-    const payload = action === "generate" ? input : input; 
- 
-    apiCall(payload)
-      .then((response) => {   
-        const botResponse =
-          action === "generate"
-            ? response.data.sql_query 
-            : JSON.stringify(response.data.result, null, 2); 
+    const payload = input; // Send input to the API
 
+    apiCall(payload)
+      .then((response) => {
+        const botResponse = formatResponse(response.data, action); // Format the response
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: "bot", text: botResponse },
+          { sender: "bot", content: botResponse },
         ]);
       })
       .catch((error) => {
@@ -49,12 +92,12 @@ const ChatBot = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSend("generate"); 
+      handleSend("generate");
     }
   };
 
   const toggleChatBot = () => {
-    setIsOpen(!isOpen); 
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -76,7 +119,9 @@ const ChatBot = () => {
                     msg.sender === "bot" ? "bot" : "user"
                   }`}
                 >
-                  <span>{msg.text}</span>
+                  <span>
+                    {msg.sender === "bot" && msg.content ? msg.content : msg.text}
+                  </span>
                 </div>
               ))}
             </div>
